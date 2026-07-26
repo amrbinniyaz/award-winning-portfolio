@@ -234,7 +234,7 @@
 
     if (window.Contours) window.Contours.init();
     if (window.Fluid) {
-      if (window.Fluid.init()) window.Fluid.setBackground('assets/images/fluid-bg.png');
+      if (window.Fluid.init()) window.Fluid.setBackground('assets/images/fluid-bg.webp');
     }
     if (window.LiquidMask) window.LiquidMask.init();
     if (window.Nameplate) window.Nameplate.init();

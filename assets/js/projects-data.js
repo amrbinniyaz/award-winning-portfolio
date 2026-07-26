@@ -26,14 +26,14 @@ window.Projects = [
     "title": "SprXintel — School Intelligence",
     "category": "Product",
     "year": "2026",
-    "cover": "assets/images/work/sprxintel-01-dashboard.jpg",
+    "cover": "assets/images/work/sprxintel-01-dashboard.webp",
     "gallery": [
-      "assets/images/work/sprxintel-02-crawl-jobs.jpg",
-      "assets/images/work/sprxintel-03-schools.jpg",
-      "assets/images/work/sprxintel-04-school-detail.jpg",
-      "assets/images/work/sprxintel-05-content-editor.jpg",
-      "assets/images/work/sprxintel-06-sitemap-builder.jpg",
-      "assets/images/work/sprxintel-07-ask-ai.jpg"
+      "assets/images/work/sprxintel-02-crawl-jobs.webp",
+      "assets/images/work/sprxintel-03-schools.webp",
+      "assets/images/work/sprxintel-04-school-detail.webp",
+      "assets/images/work/sprxintel-05-content-editor.webp",
+      "assets/images/work/sprxintel-06-sitemap-builder.webp",
+      "assets/images/work/sprxintel-07-ask-ai.webp"
     ],
     "description": "A content pipeline that crawls a school website, scores and refines what it finds, rebuilds the structure in a visual sitemap, and pushes the result straight into a CMS.",
     "source": "",
@@ -88,12 +88,12 @@ window.Projects = [
     "title": "Fixigate UAE",
     "category": "Media",
     "year": "2019",
-    "cover": "assets/images/work/fixigate-uae-cover-00.jpeg",
+    "cover": "assets/images/work/fixigate-uae-cover-00.webp",
     "gallery": [
-      "assets/images/work/fixigate-uae-01.jpeg",
-      "assets/images/work/fixigate-uae-02.jpg",
-      "assets/images/work/fixigate-uae-03.jpg",
-      "assets/images/work/fixigate-uae-04.jpg"
+      "assets/images/work/fixigate-uae-01.webp",
+      "assets/images/work/fixigate-uae-02.webp",
+      "assets/images/work/fixigate-uae-03.webp",
+      "assets/images/work/fixigate-uae-04.webp"
     ],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/fixigate-uae/"
@@ -103,11 +103,11 @@ window.Projects = [
     "title": "Aura Luxury Lighting",
     "category": "Media",
     "year": "2019",
-    "cover": "assets/images/work/aura-luxury-lighting-cover-00.jpeg",
+    "cover": "assets/images/work/aura-luxury-lighting-cover-00.webp",
     "gallery": [
-      "assets/images/work/aura-luxury-lighting-01.jpeg",
-      "assets/images/work/aura-luxury-lighting-02.jpg",
-      "assets/images/work/aura-luxury-lighting-03.jpg"
+      "assets/images/work/aura-luxury-lighting-01.webp",
+      "assets/images/work/aura-luxury-lighting-02.webp",
+      "assets/images/work/aura-luxury-lighting-03.webp"
     ],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/aura-luxury-lighting/"
@@ -117,16 +117,16 @@ window.Projects = [
     "title": "Vegan Valley",
     "category": "Illustration",
     "year": "2019",
-    "cover": "assets/images/work/portraits-cover-00.jpg",
+    "cover": "assets/images/work/portraits-cover-00.webp",
     "gallery": [
-      "assets/images/work/portraits-01.jpg",
-      "assets/images/work/portraits-02.jpg",
-      "assets/images/work/portraits-03.jpg",
-      "assets/images/work/portraits-04.jpg",
-      "assets/images/work/portraits-05.jpg",
-      "assets/images/work/portraits-06.jpg",
-      "assets/images/work/portraits-07.jpg",
-      "assets/images/work/portraits-08.jpg"
+      "assets/images/work/portraits-01.webp",
+      "assets/images/work/portraits-02.webp",
+      "assets/images/work/portraits-03.webp",
+      "assets/images/work/portraits-04.webp",
+      "assets/images/work/portraits-05.webp",
+      "assets/images/work/portraits-06.webp",
+      "assets/images/work/portraits-07.webp",
+      "assets/images/work/portraits-08.webp"
     ],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/portraits/"
@@ -136,7 +136,7 @@ window.Projects = [
     "title": "Lulu group",
     "category": "Media",
     "year": "2019",
-    "cover": "assets/images/work/history-of-van-cover-00.png",
+    "cover": "assets/images/work/history-of-van-cover-00.webp",
     "gallery": [],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/history-of-van/"
@@ -146,7 +146,7 @@ window.Projects = [
     "title": "Leymoon Restaurant",
     "category": "Media",
     "year": "2019",
-    "cover": "assets/images/work/changes-lion-cover-00.png",
+    "cover": "assets/images/work/changes-lion-cover-00.webp",
     "gallery": [],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/changes-lion/"
@@ -156,11 +156,11 @@ window.Projects = [
     "title": "Bottle Logo Mockup",
     "category": "Illustration",
     "year": "2019",
-    "cover": "assets/images/work/bottle-logo-mockup-2-cover-00.jpg",
+    "cover": "assets/images/work/bottle-logo-mockup-2-cover-00.webp",
     "gallery": [
-      "assets/images/work/bottle-logo-mockup-2-01.jpg",
-      "assets/images/work/bottle-logo-mockup-2-02.jpg",
-      "assets/images/work/bottle-logo-mockup-2-03.jpg"
+      "assets/images/work/bottle-logo-mockup-2-01.webp",
+      "assets/images/work/bottle-logo-mockup-2-02.webp",
+      "assets/images/work/bottle-logo-mockup-2-03.webp"
     ],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/bottle-logo-mockup-2/"
@@ -170,7 +170,7 @@ window.Projects = [
     "title": "An award winning architecture and interior designing firm in Calicut.",
     "category": "Media",
     "year": "2019",
-    "cover": "assets/images/work/an-award-winning-architecture-and-interior-designing-firm-in-calicut-cover-00.jpg",
+    "cover": "assets/images/work/an-award-winning-architecture-and-interior-designing-firm-in-calicut-cover-00.webp",
     "gallery": [],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/an-award-winning-architecture-and-interior-designing-firm-in-calicut/"
@@ -180,11 +180,11 @@ window.Projects = [
     "title": "Branding Presentation Kit",
     "category": "Illustration",
     "year": "2019",
-    "cover": "assets/images/work/branding-presentation-kit-2-cover-00.jpg",
+    "cover": "assets/images/work/branding-presentation-kit-2-cover-00.webp",
     "gallery": [
-      "assets/images/work/branding-presentation-kit-2-01.jpg",
-      "assets/images/work/branding-presentation-kit-2-02.jpg",
-      "assets/images/work/branding-presentation-kit-2-03.jpg"
+      "assets/images/work/branding-presentation-kit-2-01.webp",
+      "assets/images/work/branding-presentation-kit-2-02.webp",
+      "assets/images/work/branding-presentation-kit-2-03.webp"
     ],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/branding-presentation-kit-2/"
@@ -194,11 +194,11 @@ window.Projects = [
     "title": "Branding Presentation Kit",
     "category": "Illustration",
     "year": "2019",
-    "cover": "assets/images/work/branding-presentation-kit-cover-00.jpg",
+    "cover": "assets/images/work/branding-presentation-kit-cover-00.webp",
     "gallery": [
-      "assets/images/work/branding-presentation-kit-01.jpg",
-      "assets/images/work/branding-presentation-kit-02.jpg",
-      "assets/images/work/branding-presentation-kit-03.jpg"
+      "assets/images/work/branding-presentation-kit-01.webp",
+      "assets/images/work/branding-presentation-kit-02.webp",
+      "assets/images/work/branding-presentation-kit-03.webp"
     ],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/branding-presentation-kit/"
@@ -208,7 +208,7 @@ window.Projects = [
     "title": "Portrait Sketch",
     "category": "Illustration",
     "year": "2019",
-    "cover": "assets/images/work/portrait-sketch-cover-00.jpg",
+    "cover": "assets/images/work/portrait-sketch-cover-00.webp",
     "gallery": [],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/portrait-sketch/"
@@ -218,7 +218,7 @@ window.Projects = [
     "title": "Creatin — Way The Right Way",
     "category": "Video",
     "year": "2019",
-    "cover": "assets/images/work/creatin-way-the-right-way-cover-00.jpeg",
+    "cover": "assets/images/work/creatin-way-the-right-way-cover-00.webp",
     "gallery": [],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/creatin-way-the-right-way/"
@@ -228,7 +228,7 @@ window.Projects = [
     "title": "Too Future. Guest Mix 108: Laxcity",
     "category": "Media",
     "year": "2019",
-    "cover": "assets/images/work/too-future-guest-mix-108-laxcity-cover-00.jpg",
+    "cover": "assets/images/work/too-future-guest-mix-108-laxcity-cover-00.webp",
     "gallery": [],
     "description": "",
     "source": "https://amrniyaz.com/portfolio/too-future-guest-mix-108-laxcity/"

@@ -164,9 +164,9 @@ it. Write one into any project and it renders automatically:
 Six of the twelve projects also have no gallery — only a cover. Those detail
 pages omit the gallery section entirely rather than leave a gap.
 
-Images were optimised on import: opaque PNGs converted to JPEG, everything
-capped at 1600px. That took the set from 36MB to 13MB. Two covers with genuine
-transparency stayed PNG.
+All images are WebP, quality 84, capped at 1600px. The set went 36MB raw to
+5MB. WebP keeps alpha, so the two covers with real transparency no longer need
+to stay as 1.4MB PNGs.
 
 ### Deep links
 

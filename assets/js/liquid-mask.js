@@ -146,7 +146,7 @@
 
     var src = document.getElementById('portraitIllustration');
     illustrationImg = new Image();
-    illustrationImg.src = src ? src.getAttribute('src') : 'assets/images/portrait-illustration.png';
+    illustrationImg.src = src ? src.getAttribute('src') : 'assets/images/portrait-illustration.webp';
   }
 
   window.LiquidMask = {
