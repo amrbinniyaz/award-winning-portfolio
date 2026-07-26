@@ -43,6 +43,21 @@ body.page-scroll .site-nav::before {
   );
 }
 
+/* ══════════ PAGE ENTRANCE ══════════
+   Header pieces rise in sequence on load, same easing and direction as the
+   home page so arriving here feels continuous with leaving there. Kept to
+   opacity + transform so it stays on the compositor. */
+
+.page-eyebrow { animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+.page-title   { animation: riseIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.13s both; }
+.page-sub     { animation: riseIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both; }
+.filters      { animation: riseIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.31s both; }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Page header ─────────────────────────────────────────── */
 .page-head {
   padding: clamp(96px, 14vh, 168px) 0 clamp(34px, 5vh, 64px);
@@ -169,6 +184,25 @@ body.page-scroll .site-nav::before {
   transition: transform 1.05s var(--ease-out-quint), filter 0.7s var(--ease-out-quint);
   filter: saturate(0.82) contrast(1.02);
 }
+
+/* Before a card is revealed its image sits further out and flatter, so it
+   settles into place as the card rises rather than arriving finished. Reuses
+   the transition above — no extra animation needed, and it hands straight
+   over to the hover zoom afterwards. */
+.work-card:not(.is-in) .work-media img {
+  transform: scale(1.16);
+  filter: saturate(0.5) contrast(0.96);
+}
+
+/* Meta trails the image slightly, so the card resolves top-down. */
+.work-meta {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity   0.7s var(--ease-out-quint) 0.18s,
+    transform 0.7s var(--ease-out-quint) 0.18s;
+}
+.work-card.is-in .work-meta { opacity: 1; transform: translateY(0); }
 
 .work-card:hover .work-media img,
 .work-card:focus-visible .work-media img {
@@ -602,6 +636,20 @@ body.page-scroll .site-nav::before {
 
 @media (prefers-reduced-motion: reduce) {
   .work-card,
+  .work-meta,
   .gallery-figure { opacity: 1 !important; transform: none !important; }
+
+  .page-eyebrow,
+  .page-title,
+  .page-sub,
+  .filters { animation: none !important; }
+
+  /* Without this the un-revealed state would stick, leaving every image
+     permanently zoomed and desaturated. */
+  .work-card:not(.is-in) .work-media img {
+    transform: scale(1.02) !important;
+    filter: saturate(0.82) contrast(1.02) !important;
+  }
+
   .work-media::after { display: none; }
 }

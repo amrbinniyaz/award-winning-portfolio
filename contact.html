@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>html{background:#FBFBFB}</style>
+
+  <script>
+    (function () {
+      var c = sessionStorage.getItem('txColor');
+      if (sessionStorage.getItem('txLabel') === null) return;
+      var d = document.createElement('div');
+      d.id = 'txInitCover';
+      d.style.cssText = 'position:fixed;inset:0;z-index:9890;background:' + (c || '#1a1614') + ';pointer-events:none';
+      document.documentElement.appendChild(d);
+    })();
+  </script>
+
+  <title>Contact — Amr Binniyaz</title>
+  <meta name="description" content="Get in touch with Amr Binniyaz — UI Developer based in London, available for freelance work.">
+  <meta property="og:title" content="Contact — Amr Binniyaz">
+  <meta property="og:description" content="UI Developer based in London — available for freelance work.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="stylesheet" href="assets/css/projects.css">
+  <link rel="stylesheet" href="assets/css/contact.css">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="page-scroll">
+
+  <a href="#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <div class="bg-layer" aria-hidden="true">
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <div class="bg-noise"></div>
+  </div>
+
+  <main id="mainContent">
+    <div class="wrap">
+
+      <header class="page-head">
+        <p class="page-eyebrow">Get in touch</p>
+        <h1 class="page-title">CONTACT</h1>
+        <p class="page-sub">
+          Available for freelance work and open to conversations about
+          interesting front-end problems. The fastest route is email.
+        </p>
+
+        <dl class="contact-strip">
+          <div class="contact-cell">
+            <dt>Based</dt>
+            <dd>London, UK</dd>
+          </div>
+          <div class="contact-cell">
+            <dt>Availability</dt>
+            <dd class="available">Freelance</dd>
+          </div>
+          <div class="contact-cell">
+            <dt>Discipline</dt>
+            <dd>UI Development</dd>
+          </div>
+        </dl>
+      </header>
+
+      <!-- ══════════ DIRECT ══════════ -->
+      <section class="section" aria-labelledby="direct-title">
+        <div class="section-head">
+          <span class="section-nr">01</span>
+          <h2 class="section-title" id="direct-title">Direct</h2>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="direct-list">
+          <a class="direct-row" href="mailto:amrbinniyaz@gmail.com">
+            <span class="direct-label">Email</span>
+            <span class="direct-value">amrbinniyaz@gmail.com</span>
+          </a>
+          <a class="direct-row" href="tel:+447789582345">
+            <span class="direct-label">Phone</span>
+            <span class="direct-value">+44 7789 582345</span>
+          </a>
+          <a class="direct-row" href="https://github.com/amrbinniyaz" target="_blank" rel="noopener noreferrer">
+            <span class="direct-label">GitHub</span>
+            <span class="direct-value">github.com/amrbinniyaz</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ══════════ COMPOSE ══════════ -->
+      <section class="section" aria-labelledby="compose-title">
+        <div class="section-head">
+          <span class="section-nr">02</span>
+          <h2 class="section-title" id="compose-title">Send a message</h2>
+          <span class="section-rule"></span>
+        </div>
+
+        <form class="compose" id="composeForm" novalidate>
+          <div class="field">
+            <label for="cName">Your name</label>
+            <input type="text" id="cName" name="name" autocomplete="name" placeholder="Who's writing?">
+          </div>
+
+          <div class="field">
+            <label for="cEmail">Your email</label>
+            <input type="email" id="cEmail" name="email" autocomplete="email" placeholder="So I can reply">
+          </div>
+
+          <div class="field">
+            <label for="cMessage">Message</label>
+            <textarea id="cMessage" name="message" placeholder="What are you working on?"></textarea>
+          </div>
+
+          <div class="compose-actions">
+            <button type="submit" class="compose-send">
+              <span>Open in mail app</span>
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+            <p class="compose-note" id="composeNote">
+              This fills in a draft in your own mail app — nothing is sent from
+              this page, and nothing is stored here.
+            </p>
+          </div>
+        </form>
+      </section>
+
+      <footer class="site-foot">
+        <span>&copy; <span id="year"></span> Amr Binniyaz</span>
+        <a href="/">Back to home</a>
+      </footer>
+
+    </div>
+  </main>
+
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+  </div>
+
+  <div id="pageOverlay" aria-hidden="true"><span class="overlay-label" id="overlayLabel"></span></div>
+
+  <div class="page-tv-overlay" aria-hidden="true">
+    <div class="page-scanlines"></div>
+    <canvas class="page-grain-canvas" id="pageGrainCanvas"></canvas>
+    <div class="page-scanner-lines">
+      <span style="--dur:10s;--op:0.10"></span>
+      <span style="--dur:13s;--op:0.07"></span>
+      <span style="--dur:17s;--op:0.04"></span>
+    </div>
+    <div class="page-inner-glow"></div>
+    <div class="page-vignette"></div>
+  </div>
+
+  <div class="page-crt-bevel" aria-hidden="true"></div>
+  <div class="page-tv-frame" aria-hidden="true"></div>
+  <svg class="page-tv-stroke" aria-hidden="true"></svg>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/reveal.js" defer></script>
+  <script src="assets/js/transition.js" defer></script>
+  <script src="assets/js/contours.js" defer></script>
+  <script src="assets/js/cursor.js" defer></script>
+  <script src="assets/js/crt-overlay.js" defer></script>
+  <script src="assets/js/nav.js" defer></script>
+  <script src="assets/js/contact.js" defer></script>
+</body>
+</html>

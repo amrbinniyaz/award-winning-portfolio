@@ -1,0 +1,200 @@
+/* ═══════════════════════════════════════════════════════════
+   CONTACT — direct details + mail-app compose
+   Reuses .page-head / .section / .tag primitives from projects.css.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Availability strip ──────────────────────────────────── */
+.contact-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: clamp(30px, 5vh, 52px);
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.contact-cell {
+  background: var(--bg);
+  padding: 20px 22px;
+}
+
+.contact-cell dt {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.52);
+  margin-bottom: 9px;
+}
+
+.contact-cell dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(17px, 1.7vw, 23px);
+  letter-spacing: 0.03em;
+  color: var(--fg);
+}
+
+.available::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 1px;
+  animation: availablePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes availablePulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+  50%      { opacity: 0.5; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+}
+
+/* ── Direct lines ────────────────────────────────────────── */
+.direct-list {
+  display: grid;
+  gap: 2px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.direct-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: clamp(20px, 3vh, 30px) 4px;
+  background: var(--bg);
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left 0.4s var(--ease-out-quint);
+}
+.direct-row:hover { padding-left: 16px; }
+
+.direct-label {
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.52);
+}
+
+.direct-value {
+  font-family: var(--font-display);
+  /* Shrinks on narrow screens so a long email never forces a scrollbar. */
+  font-size: clamp(19px, 3.4vw, 40px);
+  letter-spacing: 0.015em;
+  line-height: 1.1;
+  color: var(--fg);
+  word-break: break-word;
+  text-align: right;
+}
+
+a.direct-row .direct-value { transition: opacity 0.3s var(--ease-out-quint); }
+a.direct-row:hover .direct-value { opacity: 0.6; }
+
+/* ── Compose form ────────────────────────────────────────── */
+.compose {
+  display: grid;
+  gap: 22px;
+  max-width: 660px;
+}
+
+.field { display: grid; gap: 9px; }
+
+.field label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.52);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--fg);
+  border-radius: 0;
+  -webkit-appearance: none;
+  transition: border-color 0.3s var(--ease-out-quint), background 0.3s var(--ease-out-quint);
+}
+
+.field textarea { min-height: 150px; resize: vertical; }
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--fg);
+  background: rgba(17, 17, 17, 0.02);
+}
+
+.field input::placeholder,
+.field textarea::placeholder { color: rgba(17, 17, 17, 0.3); }
+
+.compose-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+
+.compose-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 26px;
+  border: 1px solid var(--fg);
+  background: var(--fg);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background 0.35s var(--ease-out-quint), color 0.35s var(--ease-out-quint);
+}
+.compose-send:hover { background: transparent; color: var(--fg); }
+
+/* States the button never silently lies about — see contact.js. */
+.compose-note {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(17, 17, 17, 0.55);
+  max-width: 34ch;
+}
+.compose-note.is-error { color: #c2410c; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 780px) {
+  .contact-strip { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  /* Label above value, so a long email gets the full width. */
+  .direct-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .direct-value { text-align: left; }
+  .compose-send { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .available::before { animation: none; }
+  .direct-row:hover { padding-left: 4px; }
+}

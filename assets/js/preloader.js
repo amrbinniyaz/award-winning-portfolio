@@ -282,42 +282,34 @@
     var right = document.getElementById('sideRight');
     var nav = document.querySelector('.site-nav');
 
-    // Portrait flickers on like a tube striking — fast stutter settling into
-    // longer holds, then a clean fade to steady.
+    // Hand the whole entrance to CSS. `is-entering` drives exactly the same
+    // choreography as a return visit — portrait up from the bottom, numerals in
+    // from the sides, nav down from the top — with the CRT signal-lock folded
+    // into the portrait's own keyframe so the two don't compete for the
+    // animation property.
+    //
+    // Nothing here sets inline opacity/transform on those elements any more:
+    // inline styles beat CSS animations, so the previous JS fade-in would have
+    // silently cancelled the entrance.
     if (portrait) {
       portrait.style.transition = 'none';
-      portrait.style.opacity = '0';
-
-      var blinks = [
-        [50, 1], [105, 0], [160, 1], [215, 0], [270, 1], [325, 0], [380, 1], [435, 0],
-        [555, 1], [675, 0], [855, 1], [1035, 0], [1285, 1], [1535, 0],
-        [2135, 1], [2600, 0], [3300, 1]
-      ];
-      blinks.forEach(function (b) {
-        setTimeout(function () { portrait.style.opacity = String(b[1]); }, b[0]);
-      });
-      setTimeout(function () {
-        portrait.style.transition = 'opacity 0.6s ease';
-        portrait.style.opacity = '1';
-      }, 3320);
+      portrait.style.opacity = '1';
     }
+    if (name) name.style.opacity = '1';
+    if (left) left.style.opacity = '1';
+    if (right) right.style.opacity = '1';
+    if (nav) nav.style.opacity = '1';
 
-    // Everything else eases in behind the flicker.
-    function fadeIn(node, delay, transform) {
-      if (!node) return;
-      node.style.opacity = '0';
-      if (transform) node.style.transform = transform;
-      setTimeout(function () {
-        node.style.transition = 'opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1)';
-        node.style.opacity = '1';
-        if (transform) node.style.transform = transform.replace(/translateX\([^)]*\)/, 'translateX(0)');
-      }, delay);
-    }
+    document.documentElement.classList.add('is-entering');
 
-    fadeIn(name, 900);
-    fadeIn(left, 1200, 'translateY(-50%) translateX(-180%)');
-    fadeIn(right, 1200, 'translateY(-50%) translateX(180%)');
-    fadeIn(nav, 1400);
+    // Drop the class once the entrance is done. `fill-mode: both` otherwise
+    // holds the last keyframe forever, which leaves the portrait carrying an
+    // identity filter — visually a no-op, but enough to pin it to its own
+    // compositing layer for the life of the page. Removing the class lets every
+    // element fall back to its natural resting style.
+    setTimeout(function () {
+      document.documentElement.classList.remove('is-entering');
+    }, 1500);
 
     ['fluidCanvas', 'bgCanvas', 'illustrationCanvas'].forEach(function (id, i) {
       var c = document.getElementById(id);
@@ -333,17 +325,38 @@
 
   /* ── Boot ────────────────────────────────────────────────── */
 
+  /** Show the page with no boot sequence at all. */
+  function skipBoot() {
+    finished = true;
+    if (el.root) el.root.remove();
+    document.documentElement.classList.add('skip-boot');
+    document.body.classList.remove('boot-pending');
+    document.dispatchEvent(new CustomEvent('preloader:done'));
+  }
+
   function init() {
     el.root = document.getElementById('preloader');
     if (!el.root) return;
 
     // Reduced motion: skip the whole sequence, show the page immediately.
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.root.remove();
-      document.body.classList.remove('boot-pending');
-      document.dispatchEvent(new CustomEvent('preloader:done'));
+      skipBoot();
       return;
     }
+
+    // Already booted this session — returning from another page, or a reload.
+    // The <head> script has already hidden the CRT; this clears the state that
+    // keeps the content itself held back.
+    var booted = false;
+    try { booted = !!sessionStorage.getItem('hasBooted'); } catch (e) {}
+    if (booted) {
+      skipBoot();
+      return;
+    }
+
+    // Marked at the start rather than on completion: someone who navigates away
+    // mid-boot and comes straight back should not have to sit through it again.
+    try { sessionStorage.setItem('hasBooted', '1'); } catch (e) {}
 
     el.outer = document.getElementById('tvOuter');
     el.inner = document.getElementById('tvInner');

@@ -19,6 +19,10 @@
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* True only where a real cursor exists. Gates the interactions that are
+     meaningless on touch — the left/right slide and the depth parallax. */
+  var HAS_FINE_POINTER = window.matchMedia('(pointer: fine)').matches;
+
   /* ── Shared state ────────────────────────────────────────── */
 
   var pointerX = 0.5, pointerY = 0.5;        // normalized, raw
@@ -150,6 +154,20 @@
     pointerX = e.clientX / window.innerWidth;
     pointerY = e.clientY / window.innerHeight;
 
+    // The slide and nameplate swap are hover-model interactions: they answer
+    // "which half is the cursor in", which is meaningless without a cursor.
+    //
+    // This guard matters because tapping a touchscreen fires a SYNTHETIC
+    // mousemove. Without it, a single tap sets slideTarget to ±250px and the
+    // whole composition lurches sideways. The dedicated touchmove handler
+    // never sets slideTarget, but the synthetic event bypasses it entirely.
+    if (!HAS_FINE_POINTER) {
+      isIdle = false;
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(function () { isIdle = true; }, IDLE_MS);
+      return;
+    }
+
     // Dead zone between 0.4 and 0.6 stops the name thrashing mid-screen.
     var next = pointerX < 0.4 ? 'left' : pointerX > 0.6 ? 'right' : 'center';
     if (next !== side) {
@@ -251,8 +269,11 @@
     if (window.Preloader) window.Preloader.init();
 
     // Hold the interactive layers back until the boot sequence hands over,
-    // so nothing slides around behind the CRT.
+    // so nothing slides around behind the CRT. Both are cursor-driven, so
+    // neither is armed on touch — parallax reads pointerY, which touchmove
+    // also updates, and would jolt the portrait vertically on every tap.
     document.addEventListener('preloader:done', function () {
+      if (!HAS_FINE_POINTER) return;
       setTimeout(function () { slideReady = true; }, 400);
       setTimeout(function () { parallaxReady = true; }, 900);
     });

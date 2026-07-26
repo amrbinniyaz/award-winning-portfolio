@@ -92,6 +92,7 @@
       { label: 'HOME', href: '/' },
       { label: 'PROJECTS', href: 'projects.html' },
       { label: 'RESUME', href: 'resume.html' },
+      { label: 'CONTACT', href: 'contact.html' },
     ].forEach(function (item) {
       var a = document.createElement('a');
       a.href = item.href;

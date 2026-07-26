@@ -226,9 +226,19 @@
     var halfFloat, supportLinear;
     if (isWebGL2) {
       g.getExtension('EXT_color_buffer_float');
-      supportLinear = !!g.getExtension('OES_texture_float_linear');
+      // Textures here are HALF_FLOAT (RGBA16F), and in WebGL2 linear filtering
+      // of half-float is CORE — no extension required.
+      //
+      // Do NOT gate this on OES_texture_float_linear: that extension covers
+      // 32-bit float textures, which this solver never creates. Many mobile
+      // GPUs omit it, and treating that as "no linear filtering" drops the dye
+      // sampler to NEAREST *and* halves dye resolution, which renders the blob
+      // as hard pixel squares. Desktop happens to expose it, so the bug only
+      // ever showed on phones.
+      supportLinear = true;
     } else {
       halfFloat = g.getExtension('OES_texture_half_float');
+      // WebGL1 genuinely does need the extension for half-float filtering.
       supportLinear = !!g.getExtension('OES_texture_half_float_linear');
     }
 
@@ -496,11 +506,15 @@
       (cfg.g != null ? cfg.g : 194) / 255,
       (cfg.b != null ? cfg.b : 194) / 255
     );
-    gl.uniform2f(
-      programs.display.uniforms.uEdge,
-      cfg.edgeLow  != null ? cfg.edgeLow  : 0.08,
-      cfg.edgeHigh != null ? cfg.edgeHigh : 0.09
-    );
+    // The edge window is deliberately narrow (~0.01) to give a crisp blob
+    // boundary. That only reads as clean when the dye sampler can interpolate;
+    // with NEAREST there is nothing between texels and the boundary steps
+    // through whole pixels. Widen it in that case so the mask self-softens.
+    var edgeLow  = cfg.edgeLow  != null ? cfg.edgeLow  : 0.08;
+    var edgeHigh = cfg.edgeHigh != null ? cfg.edgeHigh : 0.09;
+    if (!ext.supportLinearFiltering) edgeHigh = edgeLow + (edgeHigh - edgeLow) * 6;
+
+    gl.uniform2f(programs.display.uniforms.uEdge, edgeLow, edgeHigh);
 
     if (bgTexture) {
       gl.activeTexture(gl.TEXTURE1);

@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>html{background:#1a1614}</style>
 
+  <!-- Boot sequence runs once per browsing session. This has to be inline in
+       <head>, before first paint: deciding in preloader.js is too late and the
+       dark boot screen flashes for a frame on every return to home. Also flips
+       the page background, since the dark value above is only right when the
+       CRT is about to cover the screen. -->
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('hasBooted')) {
+          document.documentElement.classList.add('skip-boot');
+          document.documentElement.style.background = '#FBFBFB';
+        }
+      } catch (e) { /* private mode — just play the boot */ }
+    })();
+  </script>
+
   <title>Amr Binniyaz — Projects</title>
   <meta name="description" content="Amr Binniyaz — brand identity, visual design and digital art.">
   <meta property="og:type" content="website">

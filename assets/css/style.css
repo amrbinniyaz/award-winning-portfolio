@@ -281,6 +281,31 @@ body.boot-pending .portrait-section { opacity: 0; }
 .illustration-canvas { pointer-events: none; }
 body.boot-pending .illustration-canvas { opacity: 0; }
 
+/* ── Portrait reveal: CRT signal lock ─────────────────────
+   Blooms in over-bright and desaturated, dips once, then settles — the look
+   of a tube finding its signal. Replaces a 17-step on/off stutter that ran
+   for 3.3s and read as a stuck page rather than an effect.
+
+   Runs on .portrait-frame, NOT .portrait-section: main.js writes an inline
+   transform on the section every frame for parallax, and an animation on the
+   same property would fight it. Only opacity/transform/filter animate, so it
+   stays on the compositor. */
+.portrait-frame.is-striking {
+  animation: portraitStrike 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes portraitStrike {
+  0%   { opacity: 0;    transform: scale(1.05); filter: brightness(2.1) contrast(0.6) saturate(0.25); }
+  20%  { opacity: 1;                            filter: brightness(1.5) contrast(0.85) saturate(0.6); }
+  32%  { opacity: 0.6;                          filter: brightness(1.7) contrast(0.8) saturate(0.5); }
+  46%  { opacity: 1;                            filter: brightness(1.12) contrast(0.98) saturate(0.9); }
+  100% { opacity: 1;    transform: scale(1);    filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-frame.is-striking { animation: none; }
+}
+
 /* ── Nameplate ── */
 /* Bottom-anchored, not centred: the face overlaps its upper edge, which is
    what makes the name read as set *behind* the portrait rather than beside it. */
@@ -533,6 +558,82 @@ body.boot-pending.cursor-hover .cursor-ring {
   overflow: hidden;
 }
 .preloader.is-done { display: none; }
+
+/* Set by the inline head script when this session has already booted, so the
+   CRT screen never paints on a return to home. */
+html.skip-boot .preloader { display: none !important; }
+
+/* ══════════ RETURN-TO-HOME ENTRANCE ══════════
+   With the boot skipped the page would otherwise snap in fully formed. This
+   staggers the pieces in from the edges they belong to: portrait up from the
+   bottom, numerals in from the sides, nav down from the top.
+
+   Each animation targets a CHILD of the elements main.js drives, never the
+   elements themselves — the render loop writes inline transforms on
+   .portrait-section and .name-section every frame for parallax, and animating
+   the same property would fight it. */
+
+/* Both paths share the choreography. `skip-boot` = returning to home,
+   `is-entering` = set by preloader.js the moment the CRT hands over. */
+html.skip-boot   .portrait-frame { animation: enterUp       0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+html.is-entering .portrait-frame { animation: enterUpStrike 1.20s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+
+html.skip-boot .name-display,
+html.is-entering .name-display   { animation: enterUp    0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.20s both; }
+
+html.skip-boot .side--left,
+html.is-entering .side--left     { animation: enterLeft  0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.38s both; }
+
+html.skip-boot .side--right,
+html.is-entering .side--right    { animation: enterRight 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.38s both; }
+
+html.skip-boot .site-nav,
+html.is-entering .site-nav       { animation: enterDown  0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.50s both; }
+
+/* Rise + CRT signal-lock as a single animation. Two separate ones on the same
+   element would overwrite each other — only the last declared would run. */
+@keyframes enterUpStrike {
+  0%   { opacity: 0;    transform: translateY(70px); filter: brightness(2.1) contrast(0.6) saturate(0.25); }
+  22%  { opacity: 1;                                 filter: brightness(1.5) contrast(0.85) saturate(0.6); }
+  34%  { opacity: 0.62;                              filter: brightness(1.7) contrast(0.8) saturate(0.5); }
+  48%  { opacity: 1;                                 filter: brightness(1.12) contrast(0.98) saturate(0.9); }
+  100% { opacity: 1;    transform: translateY(0);    filter: none; }
+}
+
+@keyframes enterUp {
+  from { opacity: 0; transform: translateY(70px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* The side links sit on translateY(-50%) for vertical centring — the keyframes
+   have to carry it, or they'd snap down half their height mid-animation. */
+@keyframes enterLeft {
+  from { opacity: 0; transform: translateY(-50%) translateX(-70px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+@keyframes enterRight {
+  from { opacity: 0; transform: translateY(-50%) translateX(70px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+@keyframes enterDown {
+  from { opacity: 0; transform: translateY(-44px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.skip-boot .portrait-frame,
+  html.skip-boot .name-display,
+  html.skip-boot .side--left,
+  html.skip-boot .side--right,
+  html.skip-boot .site-nav,
+  html.is-entering .portrait-frame,
+  html.is-entering .name-display,
+  html.is-entering .side--left,
+  html.is-entering .side--right,
+  html.is-entering .site-nav { animation: none; }
+}
 
 .tv-outer {
   position: relative;
