@@ -1,0 +1,607 @@
+/* ═══════════════════════════════════════════════════════════
+   PORTFOLIO — listing grid + project detail
+   Shared by projects.html and project.html. Inherits tokens,
+   cursor, CRT overlay and nav from style.css / nav.css.
+   ═══════════════════════════════════════════════════════════ */
+
+/* style.css locks scrolling for the fixed landing page; these pages scroll. */
+body.page-scroll,
+html:has(body.page-scroll) {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: auto;
+  min-height: 100%;
+}
+
+body.page-scroll {
+  background: var(--bg);
+  /* Clear of the CRT barrel on both sides. */
+  padding: 0 clamp(24px, 6vw, 96px);
+}
+
+.wrap {
+  max-width: 1500px;
+  margin: 0 auto;
+  position: relative;
+  z-index: var(--z-content);
+}
+
+/* The nav is fixed over scrolling content; without a scrim the mark lands on
+   top of project imagery and becomes unreadable. Fades out so it never reads
+   as a solid bar. */
+body.page-scroll .site-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(251, 251, 251, 0.96) 0%,
+    rgba(251, 251, 251, 0.82) 52%,
+    rgba(251, 251, 251, 0) 100%
+  );
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.page-head {
+  padding: clamp(96px, 14vh, 168px) 0 clamp(34px, 5vh, 64px);
+}
+
+.page-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--fg-dim);
+  margin-bottom: 18px;
+}
+.page-eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(64px, 13vw, 200px);
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+
+.page-sub {
+  margin-top: 20px;
+  max-width: 46ch;
+  font-size: 15px;
+  line-height: 1.65;
+  /* Not --fg-dim: at 25% this sits right on top of the contour lines and
+     becomes genuinely hard to read. */
+  color: rgba(17, 17, 17, 0.62);
+}
+
+/* ── Filters ─────────────────────────────────────────────── */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: clamp(40px, 7vh, 84px);
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-btn {
+  position: relative;
+  border: 1px solid var(--border);
+  background: transparent;
+  padding: 11px 20px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  transition:
+    color 0.35s var(--ease-out-quint),
+    border-color 0.35s var(--ease-out-quint),
+    background 0.35s var(--ease-out-quint);
+}
+
+.filter-btn:hover { color: var(--fg); border-color: var(--border-strong); }
+
+.filter-btn.is-active {
+  color: #fff;
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.filter-count {
+  margin-left: 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  opacity: 0.55;
+}
+
+/* ── Grid ────────────────────────────────────────────────── */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(40px, 6vw, 96px) clamp(28px, 4vw, 64px);
+  padding: clamp(40px, 5vh, 68px) 0 clamp(80px, 12vh, 160px);
+}
+
+/* Offset the right column so the grid reads editorial rather than tabular. */
+.work-card:nth-child(even) { margin-top: clamp(0px, 8vw, 120px); }
+
+.work-card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0;
+  transform: translateY(38px);
+  transition:
+    opacity 0.85s var(--ease-out-quint),
+    transform 0.85s var(--ease-out-quint);
+}
+.work-card.is-in { opacity: 1; transform: translateY(0); }
+
+/* Filtered-out cards collapse out of flow entirely. */
+.work-card.is-hidden { display: none; }
+
+.work-media {
+  position: relative;
+  overflow: hidden;
+  background: var(--fg-dimmer);
+  aspect-ratio: 4 / 3;
+}
+
+.work-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Slight initial scale so the hover zoom never reveals an edge. */
+  transform: scale(1.02);
+  transition: transform 1.05s var(--ease-out-quint), filter 0.7s var(--ease-out-quint);
+  filter: saturate(0.82) contrast(1.02);
+}
+
+.work-card:hover .work-media img,
+.work-card:focus-visible .work-media img {
+  transform: scale(1.075);
+  filter: saturate(1) contrast(1.04);
+}
+
+/* Sweep that crosses the image on hover — same CRT scan language. */
+.work-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.26) 50%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.9s var(--ease-out-quint);
+  pointer-events: none;
+}
+.work-card:hover .work-media::after { transform: translateX(120%); }
+
+.work-index {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 19px;
+  color: #fff;
+  mix-blend-mode: difference;
+  letter-spacing: 0.05em;
+}
+
+.work-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.work-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(21px, 2.1vw, 34px);
+  line-height: 1.08;
+  letter-spacing: 0.015em;
+  color: var(--fg);
+  transition: opacity 0.35s var(--ease-out-quint);
+}
+.work-card:hover .work-title { opacity: 0.62; }
+
+.work-tag {
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+.work-empty {
+  padding: 80px 0;
+  text-align: center;
+  font-family: var(--font-ui);
+  color: var(--fg-dim);
+  letter-spacing: 0.1em;
+}
+
+/* ═══════════ PROJECT DETAIL ═══════════ */
+
+.project-head { padding: clamp(120px, 18vh, 210px) 0 clamp(30px, 5vh, 56px); }
+
+.project-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 34px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  text-decoration: none;
+  transition: color 0.3s var(--ease-out-quint), gap 0.3s var(--ease-out-quint);
+}
+.project-back:hover { color: var(--fg); gap: 16px; }
+
+.project-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7.5vw, 122px);
+  line-height: 0.92;
+  letter-spacing: 0.005em;
+  color: var(--fg);
+  max-width: 18ch;
+}
+
+/* ── Spec table ── */
+.project-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(28px, 5vw, 76px);
+  margin-top: clamp(34px, 5vh, 56px);
+  padding: 26px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.spec dt {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  /* Small uppercase type at 25% disappears against the contour lines. */
+  color: rgba(17, 17, 17, 0.52);
+  margin-bottom: 7px;
+}
+
+.spec dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.03em;
+  color: var(--fg);
+}
+
+.project-desc {
+  max-width: 62ch;
+  margin: clamp(34px, 5vh, 56px) 0 0;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--fg);
+}
+
+/* ── Media ── */
+.project-hero {
+  margin: clamp(40px, 7vh, 88px) 0 0;
+  overflow: hidden;
+  background: var(--fg-dimmer);
+}
+.project-hero img { width: 100%; height: auto; display: block; }
+
+.project-gallery {
+  display: grid;
+  gap: clamp(24px, 4vw, 56px);
+  padding: clamp(40px, 7vh, 88px) 0;
+}
+
+.gallery-figure {
+  margin: 0;
+  overflow: hidden;
+  background: var(--fg-dimmer);
+  opacity: 0;
+  transform: translateY(34px);
+  transition:
+    opacity 0.9s var(--ease-out-quint),
+    transform 0.9s var(--ease-out-quint);
+}
+.gallery-figure.is-in { opacity: 1; transform: translateY(0); }
+.gallery-figure img { width: 100%; height: auto; display: block; }
+
+/* Alternate inset width so a long gallery has some rhythm. */
+.gallery-figure:nth-child(3n + 2) {
+  width: min(100%, 78%);
+  margin-left: auto;
+}
+
+.project-note {
+  padding: clamp(40px, 6vh, 72px) 0;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--fg-dim);
+  max-width: 54ch;
+}
+
+/* ═══════════ SHARED SECTION PRIMITIVES ═══════════
+   Used by both the case study and the resume. They live here rather than in
+   resume.css because project.html doesn't load that stylesheet. */
+
+.section { padding: clamp(56px, 9vh, 110px) 0 0; }
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: clamp(28px, 4vh, 46px);
+}
+
+.section-nr {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: rgba(17, 17, 17, 0.42);
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 52px);
+  letter-spacing: 0.02em;
+  color: var(--fg);
+}
+
+.section-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 9px 15px;
+  border: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.68);
+  transition: border-color 0.3s var(--ease-out-quint), color 0.3s var(--ease-out-quint);
+}
+.tag:hover { border-color: var(--border-strong); color: var(--fg); }
+
+/* ═══════════ CASE STUDY ═══════════ */
+
+.case-lede {
+  max-width: 34ch;
+  margin: clamp(40px, 7vh, 80px) 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3.1vw, 42px);
+  line-height: 1.22;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+
+.case-body {
+  max-width: 64ch;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.78;
+  color: rgba(17, 17, 17, 0.76);
+}
+
+/* ── Approach steps ── */
+.case-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+  counter-reset: step;
+}
+
+.case-step {
+  counter-increment: step;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+
+/* The step number is generated, so the markup stays a plain ordered list. */
+.case-step::before {
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 19px;
+  color: var(--accent);
+}
+
+.case-step-title {
+  margin: 0 0 9px;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.2vw, 30px);
+  letter-spacing: 0.02em;
+  color: var(--fg);
+}
+
+.case-step-body {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(17, 17, 17, 0.72);
+}
+
+/* ── Stack ── */
+.stack-groups {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(26px, 4vw, 56px);
+}
+
+.stack-group h3 {
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.52);
+}
+
+/* ── Outcomes ── */
+.case-outcomes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 68ch;
+}
+
+.case-outcomes li {
+  position: relative;
+  padding: 0 0 18px 30px;
+  font-size: 16px;
+  line-height: 1.72;
+  color: rgba(17, 17, 17, 0.78);
+}
+
+.case-outcomes li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 12px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.case-note {
+  margin: clamp(40px, 6vh, 68px) 0 0;
+  padding: 20px 24px;
+  border-left: 2px solid var(--border-strong);
+  max-width: 64ch;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(17, 17, 17, 0.6);
+}
+
+@media (max-width: 780px) {
+  .case-steps { grid-template-columns: 1fr; }
+  .stack-groups { grid-template-columns: 1fr; gap: 30px; }
+}
+
+/* ── Prev / next ── */
+.project-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: clamp(48px, 8vh, 96px) 0 clamp(80px, 12vh, 140px);
+  border-top: 1px solid var(--border);
+}
+
+.pnav {
+  display: block;
+  padding: 30px 0;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.3s var(--ease-out-quint);
+}
+.pnav:hover { opacity: 0.6; }
+.pnav--next { text-align: right; }
+
+.pnav-label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  margin-bottom: 12px;
+}
+
+.pnav-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.6vw, 40px);
+  line-height: 1.05;
+  color: var(--fg);
+}
+
+.pnav.is-empty { visibility: hidden; }
+
+/* ── Footer ── */
+.site-foot {
+  padding: 40px 0 56px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.site-foot a { color: inherit; text-decoration: none; }
+.site-foot a:hover { color: var(--fg); }
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  .work-grid { gap: 48px 28px; }
+  .project-nav { gap: 12px; }
+}
+
+@media (max-width: 680px) {
+  .work-grid { grid-template-columns: 1fr; padding-top: 44px; }
+  .work-card:nth-child(even) { margin-top: 0; }
+  .gallery-figure:nth-child(3n + 2) { width: 100%; }
+  .project-specs { gap: 22px 34px; }
+  .project-nav { grid-template-columns: 1fr; }
+  .pnav--next { text-align: left; }
+  .site-foot { flex-direction: column; gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-card,
+  .gallery-figure { opacity: 1 !important; transform: none !important; }
+  .work-media::after { display: none; }
+}

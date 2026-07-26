@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>html{background:#FBFBFB}</style>
+
+  <script>
+    (function () {
+      var c = sessionStorage.getItem('txColor');
+      if (sessionStorage.getItem('txLabel') === null) return;
+      var d = document.createElement('div');
+      d.id = 'txInitCover';
+      d.style.cssText = 'position:fixed;inset:0;z-index:9890;background:' + (c || '#1a1614') + ';pointer-events:none';
+      document.documentElement.appendChild(d);
+    })();
+  </script>
+
+  <title>Resume — Amr Binniyaz</title>
+  <meta name="description" content="Amr Binniyaz — UI Developer. Work history, education and capabilities.">
+  <meta property="og:title" content="Resume — Amr Binniyaz">
+  <meta property="og:description" content="UI Developer — work history, education and capabilities.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="stylesheet" href="assets/css/projects.css">
+  <link rel="stylesheet" href="assets/css/resume.css">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="page-scroll">
+
+  <a href="#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <div class="bg-layer" aria-hidden="true">
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <div class="bg-noise"></div>
+  </div>
+
+  <main id="mainContent">
+    <div class="wrap">
+
+      <!-- ══════════ HEADER ══════════ -->
+      <header class="page-head">
+        <p class="page-eyebrow">Curriculum vitae</p>
+        <h1 class="page-title">RESUME</h1>
+        <p class="page-sub">
+          UK-based UI Developer. I translate design into interfaces that balance
+          how something looks against how it actually behaves — across education,
+          e-commerce and agency work.
+        </p>
+
+        <dl class="spec-strip">
+          <div class="spec-cell">
+            <dt>Based</dt>
+            <dd>United Kingdom</dd>
+          </div>
+          <div class="spec-cell">
+            <dt>Discipline</dt>
+            <dd>UI Development</dd>
+          </div>
+          <div class="spec-cell">
+            <dt>Active since</dt>
+            <dd>2016</dd>
+          </div>
+          <div class="spec-cell">
+            <dt>Roles logged</dt>
+            <dd>06</dd>
+          </div>
+        </dl>
+
+        <a class="cv-download" href="assets/files/amr-binniyaz-cv.pdf" download>
+          <span>Download CV</span>
+          <span class="cv-meta">PDF · 2pp</span>
+        </a>
+      </header>
+
+      <!-- ══════════ EXPERIENCE ══════════ -->
+      <section class="section" aria-labelledby="exp-title">
+        <div class="section-head">
+          <span class="section-nr">01</span>
+          <h2 class="section-title" id="exp-title">Experience</h2>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="trace" data-reveal>
+          <article class="trace-item is-current">
+            <span class="trace-year">Mar 2022 — Present</span>
+            <h3 class="trace-role">UI Design Tester</h3>
+            <span class="trace-org">Interactive Schools</span>
+            <p class="trace-desc">
+              A global digital agency building websites for leading schools.
+              Working across user-centric design and delivering interfaces that
+              stay seamless from one institution to the next.
+            </p>
+          </article>
+
+          <article class="trace-item">
+            <span class="trace-year">Jun 2021 — Feb 2022</span>
+            <h3 class="trace-role">UI Developer</h3>
+            <span class="trace-org">Gritstone Technology</span>
+            <p class="trace-desc">
+              Front-end solutions in HTML, CSS and JavaScript — translating
+              design concepts into functional, interactive interfaces.
+            </p>
+          </article>
+
+          <article class="trace-item">
+            <span class="trace-year">2019</span>
+            <h3 class="trace-role">Front End Developer</h3>
+            <span class="trace-org">Dream Souq Pvt Ltd</span>
+            <p class="trace-desc">
+              Specialised in custom eCommerce pages, building engaging and
+              responsive layouts to improve the online shopping experience.
+            </p>
+          </article>
+
+          <article class="trace-item">
+            <span class="trace-year">2018</span>
+            <h3 class="trace-role">Web Developer</h3>
+            <span class="trace-org">Gdata Technology</span>
+            <p class="trace-desc">
+              Built the front-end interface for an online hospital management
+              system on the Laravel framework.
+            </p>
+          </article>
+
+          <article class="trace-item">
+            <span class="trace-year">2017</span>
+            <h3 class="trace-role">Web Developer</h3>
+            <span class="trace-org">Dayscholars</span>
+            <p class="trace-desc">
+              Revamped the company website onto a contemporary template and
+              rebuilt it as fully responsive using Bootstrap.
+            </p>
+          </article>
+
+          <article class="trace-item">
+            <span class="trace-year">2016</span>
+            <h3 class="trace-role">Jr Web Designer</h3>
+            <span class="trace-org">Ipix Technology</span>
+            <p class="trace-desc">
+              Fixed design defects, maintained the existing site and shipped new
+              front-end features.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ══════════ EDUCATION ══════════ -->
+      <section class="section" aria-labelledby="edu-title">
+        <div class="section-head">
+          <span class="section-nr">02</span>
+          <h2 class="section-title" id="edu-title">Education</h2>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="trace" data-reveal>
+          <article class="trace-item">
+            <span class="trace-year">2023</span>
+            <h3 class="trace-role">MSc Information &amp; Communication Technology</h3>
+            <span class="trace-org">Anglia Ruskin University — Cambridge</span>
+            <p class="trace-desc">
+              Web application development in PHP and .NET, alongside Linux
+              server maintenance.
+            </p>
+          </article>
+
+          <article class="trace-item">
+            <span class="trace-year">2014</span>
+            <h3 class="trace-role">BSc Multimedia &amp; Communication</h3>
+            <span class="trace-org">Calicut University</span>
+            <p class="trace-desc">
+              Photography, graphic design and video production.
+            </p>
+          </article>
+
+          <article class="trace-item">
+            <span class="trace-year">2011</span>
+            <h3 class="trace-role">Computer Science</h3>
+            <span class="trace-org">JDT</span>
+            <p class="trace-desc">
+              Foundations in programming, principally C++.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ══════════ CAPABILITIES ══════════ -->
+      <section class="section" aria-labelledby="cap-title">
+        <div class="section-head">
+          <span class="section-nr">03</span>
+          <h2 class="section-title" id="cap-title">Capabilities</h2>
+          <span class="section-rule"></span>
+        </div>
+
+        <div class="skill-groups">
+
+          <div class="skill-group">
+            <h3>Code</h3>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">HTML</span><span class="skill-value">90</span></div>
+              <div class="meter"><span class="meter-fill" data-level="90"></span></div>
+            </div>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">CSS</span><span class="skill-value">70</span></div>
+              <div class="meter"><span class="meter-fill" data-level="70"></span></div>
+            </div>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">JavaScript</span><span class="skill-value">65</span></div>
+              <div class="meter"><span class="meter-fill" data-level="65"></span></div>
+            </div>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">WordPress</span><span class="skill-value">90</span></div>
+              <div class="meter"><span class="meter-fill" data-level="90"></span></div>
+            </div>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">PHP &amp; MySQL</span><span class="skill-value">50</span></div>
+              <div class="meter"><span class="meter-fill" data-level="50"></span></div>
+            </div>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">.NET</span><span class="skill-value">30</span></div>
+              <div class="meter"><span class="meter-fill" data-level="30"></span></div>
+            </div>
+          </div>
+
+          <div class="skill-group">
+            <h3>Design</h3>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">Photoshop</span><span class="skill-value">70</span></div>
+              <div class="meter"><span class="meter-fill" data-level="70"></span></div>
+            </div>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">Illustrator</span><span class="skill-value">60</span></div>
+              <div class="meter"><span class="meter-fill" data-level="60"></span></div>
+            </div>
+            <div class="skill">
+              <div class="skill-label"><span class="skill-name">Adobe XD</span><span class="skill-value">50</span></div>
+              <div class="meter"><span class="meter-fill" data-level="50"></span></div>
+            </div>
+          </div>
+
+          <div class="skill-group">
+            <h3>Infrastructure</h3>
+            <div class="tag-list">
+              <span class="tag">Google Cloud</span>
+              <span class="tag">AWS</span>
+              <span class="tag">Digital Ocean</span>
+              <span class="tag">Linux</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="resume-outro">
+          <p>
+            Looking for the work itself rather than the timeline? The projects
+            page has the work behind these roles.
+          </p>
+          <a class="cv-download" href="projects.html">
+            <span>View projects</span>
+            <span class="cv-meta">12</span>
+          </a>
+        </div>
+      </section>
+
+      <footer class="site-foot">
+        <span>&copy; <span id="year"></span> Amr Binniyaz</span>
+        <a href="/">Back to home</a>
+      </footer>
+
+    </div>
+  </main>
+
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+  </div>
+
+  <div id="pageOverlay" aria-hidden="true"><span class="overlay-label" id="overlayLabel"></span></div>
+
+  <div class="page-tv-overlay" aria-hidden="true">
+    <div class="page-scanlines"></div>
+    <canvas class="page-grain-canvas" id="pageGrainCanvas"></canvas>
+    <div class="page-scanner-lines">
+      <span style="--dur:10s;--op:0.10"></span>
+      <span style="--dur:13s;--op:0.07"></span>
+      <span style="--dur:17s;--op:0.04"></span>
+    </div>
+    <div class="page-inner-glow"></div>
+    <div class="page-vignette"></div>
+  </div>
+
+  <div class="page-crt-bevel" aria-hidden="true"></div>
+  <div class="page-tv-frame" aria-hidden="true"></div>
+  <svg class="page-tv-stroke" aria-hidden="true"></svg>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/reveal.js" defer></script>
+  <script src="assets/js/transition.js" defer></script>
+  <script src="assets/js/contours.js" defer></script>
+  <script src="assets/js/cursor.js" defer></script>
+  <script src="assets/js/crt-overlay.js" defer></script>
+  <script src="assets/js/nav.js" defer></script>
+  <script src="assets/js/resume.js" defer></script>
+</body>
+</html>

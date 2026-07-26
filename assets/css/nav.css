@@ -1,0 +1,132 @@
+/* ═══════════════════════════════════════════════════════════
+   NAV — morphing dot menu + mobile overlay
+   ═══════════════════════════════════════════════════════════ */
+
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Clears the CRT barrel: the frame insets 38px at the corners and the
+     sides bow inward, so anything tighter than this gets clipped. */
+  padding: 46px 76px;
+  pointer-events: none;
+  transition: opacity 0.6s var(--ease-out-quint), transform 0.6s var(--ease-out-quint);
+}
+.site-nav > * { pointer-events: auto; }
+
+body.boot-pending .site-nav { opacity: 0; transform: translateY(-20px); }
+
+.nav-mark {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.14em;
+  color: var(--fg);
+  text-decoration: none;
+  transition: opacity 0.3s var(--ease-out-quint);
+}
+.nav-mark:hover { opacity: 0.6; }
+
+/* ── Morphing 9-dot menu button ── */
+.menu-dots {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  transition: transform 0.4s var(--ease-bounce);
+}
+.menu-dots:hover { transform: scale(1.12); }
+
+.menu-dots span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;   /* centre each dot on its coordinate */
+  border-radius: 50%;
+  background: var(--fg);
+  /* Slow, springy travel — this is what makes the morph read as liquid */
+  transition:
+    left       0.9s var(--ease-bounce),
+    top        0.9s var(--ease-bounce),
+    background 0.4s var(--ease-out-quint);
+}
+
+/* Inverts when the fluid blob passes underneath the button */
+.menu-dots.fluid-over span { background: #fff; }
+
+/* ── Mobile overlay menu ── */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9700;
+  background: var(--bg-boot);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s var(--ease-out-quint), visibility 0.45s;
+}
+.nav-overlay.is-open { opacity: 1; visibility: visible; }
+
+/* Hover animates opacity and transform ONLY — both composited on the GPU.
+   The previous version animated letter-spacing, which is a layout property:
+   on 76px display type inside an overlay that is itself transitioning
+   opacity, the reflow left stale glyph edges painted either side of the
+   word. Scale gives the same "opening up" feel with no relayout. */
+.nav-overlay a {
+  display: block;
+  width: fit-content;
+  padding: 2px 10px;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 11vw, 76px);
+  letter-spacing: 0.05em;
+  color: #f4f4f4;
+  text-decoration: none;
+  opacity: 0.5;
+  transform: scale(1);
+  transform-origin: center;
+  backface-visibility: hidden;   /* keeps the scaled text crisply rasterised */
+  transition:
+    opacity   0.32s var(--ease-out-quint),
+    transform 0.32s var(--ease-out-quint);
+}
+
+.nav-overlay a:hover,
+.nav-overlay a:focus-visible {
+  opacity: 1;
+  transform: scale(1.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-overlay a { transition: opacity 0.15s linear; }
+  .nav-overlay a:hover,
+  .nav-overlay a:focus-visible { transform: none; }
+}
+
+.nav-overlay-close {
+  position: absolute;
+  top: 26px; right: 34px;
+  width: 44px; height: 44px;
+  border: 0;
+  background: transparent;
+  color: #f4f4f4;
+  font-family: var(--font-mono);
+  font-size: 30px;
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .site-nav { padding: 34px 46px; }
+}
+
+@media (max-width: 600px) {
+  /* Barrel inset drops to 12px on small screens, so this can tighten up. */
+  .site-nav { padding: 24px 28px; }
+}

@@ -1,0 +1,292 @@
+/* ═══════════════════════════════════════════════════════════
+   RESUME — CRT system readout
+   The CV presented as a machine spec sheet: a signal trace for
+   career history, segmented meters for capability levels.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Spec strip ──────────────────────────────────────────── */
+.spec-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin-top: clamp(30px, 5vh, 52px);
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.spec-cell {
+  background: var(--bg);
+  padding: 20px 22px;
+}
+
+.spec-cell dt {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.52);
+  margin-bottom: 9px;
+}
+
+.spec-cell dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(17px, 1.7vw, 23px);
+  letter-spacing: 0.03em;
+  color: var(--fg);
+}
+
+/* Blinking status dot — the one "live" element on the page. */
+.status-live::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 1px;
+  animation: statusPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+  50%      { opacity: 0.5; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+}
+
+/* ── Download ────────────────────────────────────────────── */
+.cv-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: clamp(28px, 4vh, 44px);
+  padding: 16px 26px;
+  border: 1px solid var(--fg);
+  background: var(--fg);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.35s var(--ease-out-quint), color 0.35s var(--ease-out-quint);
+}
+.cv-download:hover { background: transparent; color: var(--fg); }
+
+.cv-download .cv-meta {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+/* Section scaffolding (.section, .section-head, .section-nr, .section-title,
+   .section-rule) and the tag primitives now live in projects.css, which this
+   page also loads — the case study needs them too, and duplicating them here
+   would let the two copies drift apart. */
+
+/* ── Signal trace (career timeline) ──────────────────────── */
+.trace {
+  position: relative;
+  padding-left: clamp(28px, 4vw, 52px);
+}
+
+/* The continuous rail every entry hangs off. */
+.trace::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    var(--border-strong),
+    var(--border) 70%,
+    transparent
+  );
+}
+
+.trace-item {
+  position: relative;
+  padding: 0 0 clamp(34px, 5vh, 56px);
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s var(--ease-out-quint),
+    transform 0.8s var(--ease-out-quint);
+}
+.trace-item.is-in { opacity: 1; transform: translateY(0); }
+.trace-item:last-child { padding-bottom: 0; }
+
+/* Node on the rail. */
+.trace-item::before {
+  content: '';
+  position: absolute;
+  left: calc(clamp(28px, 4vw, 52px) * -1);
+  top: 9px;
+  width: 9px;
+  height: 9px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  transition: background 0.4s var(--ease-out-quint), border-color 0.4s var(--ease-out-quint);
+}
+
+/* Current role gets a filled node. */
+.trace-item.is-current::before {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.trace-year {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  color: rgba(17, 17, 17, 0.55);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.trace-role {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.6vw, 36px);
+  line-height: 1.1;
+  letter-spacing: 0.015em;
+  color: var(--fg);
+}
+
+.trace-org {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.55);
+  margin-bottom: 12px;
+}
+
+.trace-desc {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(17, 17, 17, 0.72);
+}
+
+/* ── Capability meters ───────────────────────────────────── */
+.skill-groups {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(30px, 5vw, 72px);
+}
+
+.skill-group h3 {
+  margin: 0 0 24px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.52);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.skill {
+  margin-bottom: 22px;
+}
+
+.skill-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.skill-name {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+}
+
+.skill-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: rgba(17, 17, 17, 0.5);
+}
+
+/* Segmented bar — same dash rhythm as the boot screen's loader, so the
+   resume reads as part of the same machine. */
+.meter {
+  position: relative;
+  height: 10px;
+  background: rgba(17, 17, 17, 0.07);
+  overflow: hidden;
+}
+
+.meter-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: repeating-linear-gradient(
+    to right,
+    var(--fg) 0px,
+    var(--fg) 7px,
+    transparent 7px,
+    transparent 11px
+  );
+  transition: width 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Infrastructure has no levels on the source CV, so it renders with the
+   shared .tag-list / .tag primitives from projects.css rather than as
+   invented numbers. */
+
+/* ── Closing ─────────────────────────────────────────────── */
+.resume-outro {
+  margin-top: clamp(56px, 9vh, 110px);
+  padding: clamp(34px, 5vh, 56px) 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.resume-outro p {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(17, 17, 17, 0.72);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .spec-strip { grid-template-columns: repeat(2, 1fr); }
+  .skill-groups { grid-template-columns: 1fr; gap: 40px; }
+}
+
+@media (max-width: 600px) {
+  .spec-strip { grid-template-columns: 1fr; }
+  .trace { padding-left: 24px; }
+  .trace-item::before { left: -24px; }
+  .cv-download { width: 100%; justify-content: space-between; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trace-item { opacity: 1 !important; transform: none !important; }
+  .meter-fill { transition: none !important; }
+  .status-live::before { animation: none; }
+}

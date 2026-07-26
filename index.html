@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>html{background:#1a1614}</style>
+
+  <title>Amr Binniyaz — Projects</title>
+  <meta name="description" content="Amr Binniyaz — brand identity, visual design and digital art.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Amr Binniyaz — Projects">
+  <meta property="og:description" content="Brand identity, visual design and digital art.">
+  <meta property="og:image" content="assets/images/fluid-bg.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="boot-pending">
+
+  <a href="#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <!-- ══════════ CRT BOOT PRELOADER ══════════ -->
+  <div class="preloader" id="preloader" role="presentation" aria-hidden="true">
+    <div class="tv-outer" id="tvOuter">
+      <div class="tv-screen">
+
+        <!-- Everything in here shakes during a glitch burst -->
+        <div class="tv-inner" id="tvInner">
+          <div class="tv-bars" id="tvBars" aria-hidden="true"></div>
+          <div class="tv-bars-bottom" id="tvBarsBottom" aria-hidden="true"></div>
+          <div class="tv-barcode tv-barcode--left" aria-hidden="true"></div>
+          <div class="tv-barcode tv-barcode--right" aria-hidden="true"></div>
+          <div class="tv-chaos" id="tvChaos" aria-hidden="true"></div>
+
+          <div class="tv-center">
+            <div class="tv-panel">
+              <div class="tv-msg" id="tvMsg"></div>
+              <div class="tv-panel-bar">
+                <div class="tv-progress">
+                  <div class="tv-progress-fill" id="tvProgressFill"></div>
+                </div>
+                <span class="tv-pct" id="tvPct">0%</span>
+              </div>
+              <div class="tv-skip-hint" id="tvSkipHint" aria-hidden="true">
+                <span class="tv-skip-desktop">PRESS SPACE OR ESC TO SKIP</span>
+                <span class="tv-skip-mobile">TAP TO SKIP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BIOS handoff screen, revealed at 100% -->
+        <div class="tv-bios" id="tvBios" aria-hidden="true"></div>
+
+        <!-- Fixed overlays — never displaced by the glitch shake -->
+        <div class="tv-scanlines" aria-hidden="true"></div>
+        <canvas class="tv-grain-canvas" id="tvGrainCanvas" aria-hidden="true"></canvas>
+        <canvas class="tv-glitch-canvas" id="tvGlitchCanvas" aria-hidden="true"></canvas>
+        <div class="tv-scanner-lines" aria-hidden="true">
+          <span style="--dur:9s;--del:0s"></span>
+          <span style="--dur:13s;--del:-5s"></span>
+          <span style="--dur:17s;--del:-10s"></span>
+        </div>
+        <div class="tv-inner-glow" aria-hidden="true"></div>
+        <div class="tv-vignette" aria-hidden="true"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ BACKGROUND LAYERS ══════════ -->
+  <div class="bg-layer" aria-hidden="true">
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <canvas class="fluid-canvas" id="fluidCanvas"></canvas>
+    <div class="bg-noise"></div>
+  </div>
+
+  <!-- ══════════ SIDE NAVIGATION ══════════ -->
+  <nav aria-label="Site sections">
+    <a href="/projects" class="side side--left" id="sideLeft">
+      <span class="side-text"><span class="side-arrow">&larr;</span> <span data-side-label></span></span>
+      <span class="side-nr" data-side-index></span>
+    </a>
+    <a href="/artworks" class="side side--right" id="sideRight">
+      <span class="side-nr" data-side-index></span>
+      <span class="side-text"><span data-side-label></span> <span class="side-arrow">&rarr;</span></span>
+    </a>
+  </nav>
+
+  <!-- ══════════ PORTRAIT + NAMEPLATE ══════════ -->
+  <main id="mainContent">
+    <h1 class="sr-only">Amr Binniyaz — designer and UI developer</h1>
+
+    <div class="slide-group" id="slideGroup" aria-hidden="true">
+
+      <div class="portrait-section" id="portraitSection">
+        <div class="portrait-frame" id="portraitFrame">
+          <img class="portrait-base" id="portraitBase"
+               src="assets/images/portrait.png" alt=""
+               width="1200" height="936" draggable="false" fetchpriority="high">
+          <img class="portrait-illustration" id="portraitIllustration"
+               src="assets/images/portrait-illustration.png" alt=""
+               width="1200" height="936" draggable="false">
+          <canvas class="illustration-canvas" id="illustrationCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="name-section" id="nameSection">
+        <div class="name-display" id="nameDisplay"><!-- reels injected by nameplate.js --></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ══════════ CUSTOM CURSOR ══════════ -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+  </div>
+
+  <!-- ══════════ PAGE TRANSITION OVERLAY ══════════ -->
+  <div id="pageOverlay" aria-hidden="true"><span class="overlay-label" id="overlayLabel"></span></div>
+
+  <!-- ══════════ PERSISTENT CRT OVERLAY ══════════ -->
+  <div class="page-tv-overlay" aria-hidden="true">
+    <div class="page-scanlines"></div>
+    <canvas class="page-grain-canvas" id="pageGrainCanvas"></canvas>
+    <div class="page-scanner-lines">
+      <span style="--dur:10s;--op:0.10"></span>
+      <span style="--dur:13s;--op:0.07"></span>
+      <span style="--dur:17s;--op:0.04"></span>
+    </div>
+    <div class="page-inner-glow"></div>
+    <div class="page-vignette"></div>
+  </div>
+
+  <div class="page-crt-bevel" aria-hidden="true"></div>
+  <div class="page-tv-frame" aria-hidden="true"></div>
+  <svg class="page-tv-stroke" aria-hidden="true"></svg>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/transition.js" defer></script>
+  <script src="assets/js/fluid.js" defer></script>
+  <script src="assets/js/contours.js" defer></script>
+  <script src="assets/js/liquid-mask.js" defer></script>
+  <script src="assets/js/nameplate.js" defer></script>
+  <script src="assets/js/cursor.js" defer></script>
+  <script src="assets/js/crt-overlay.js" defer></script>
+  <script src="assets/js/preloader.js" defer></script>
+  <script src="assets/js/nav.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

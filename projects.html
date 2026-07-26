@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>html{background:#FBFBFB}</style>
+
+  <!-- Paints a cover matching the outgoing transition tint before CSS loads,
+       so an inbound transition never flashes white. -->
+  <script>
+    (function () {
+      var c = sessionStorage.getItem('txColor');
+      if (sessionStorage.getItem('txLabel') === null) return;
+      var d = document.createElement('div');
+      d.id = 'txInitCover';
+      d.style.cssText = 'position:fixed;inset:0;z-index:9890;background:' + (c || '#1a1614') + ';pointer-events:none';
+      document.documentElement.appendChild(d);
+    })();
+  </script>
+
+  <title>Projects — Amr Binniyaz</title>
+  <meta name="description" content="Selected work by Amr Binniyaz — branding, media, illustration and video.">
+  <meta property="og:title" content="Projects — Amr Binniyaz">
+  <meta property="og:description" content="Selected work — branding, media, illustration and video.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="stylesheet" href="assets/css/projects.css">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="page-scroll">
+
+  <a href="#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <!-- Contours only on inner pages — the fluid sim is a lovely centrepiece on
+       the landing page but it fights a dense image grid for attention. -->
+  <div class="bg-layer" aria-hidden="true">
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <div class="bg-noise"></div>
+  </div>
+
+  <main id="mainContent">
+    <div class="wrap">
+
+      <header class="page-head">
+        <p class="page-eyebrow">Selected work</p>
+        <h1 class="page-title">PROJECTS</h1>
+        <p class="page-sub">
+          Branding, media, illustration and motion — work produced for clients
+          across the UAE, India and Canada.
+        </p>
+      </header>
+
+      <nav class="filters" id="filters" aria-label="Filter work by category"></nav>
+
+      <div class="work-grid" id="workGrid"></div>
+
+      <footer class="site-foot">
+        <span>&copy; <span id="year"></span> Amr Binniyaz</span>
+        <a href="/">Back to home</a>
+      </footer>
+
+    </div>
+  </main>
+
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+  </div>
+
+  <div id="pageOverlay" aria-hidden="true"><span class="overlay-label" id="overlayLabel"></span></div>
+
+  <div class="page-tv-overlay" aria-hidden="true">
+    <div class="page-scanlines"></div>
+    <canvas class="page-grain-canvas" id="pageGrainCanvas"></canvas>
+    <div class="page-scanner-lines">
+      <span style="--dur:10s;--op:0.10"></span>
+      <span style="--dur:13s;--op:0.07"></span>
+      <span style="--dur:17s;--op:0.04"></span>
+    </div>
+    <div class="page-inner-glow"></div>
+    <div class="page-vignette"></div>
+  </div>
+
+  <div class="page-crt-bevel" aria-hidden="true"></div>
+  <div class="page-tv-frame" aria-hidden="true"></div>
+  <svg class="page-tv-stroke" aria-hidden="true"></svg>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/projects-data.js"></script>
+  <script src="assets/js/reveal.js" defer></script>
+  <script src="assets/js/transition.js" defer></script>
+  <script src="assets/js/contours.js" defer></script>
+  <script src="assets/js/cursor.js" defer></script>
+  <script src="assets/js/crt-overlay.js" defer></script>
+  <script src="assets/js/nav.js" defer></script>
+  <script src="assets/js/projects.js" defer></script>
+</body>
+</html>
