@@ -1,0 +1,6 @@
+.git
+.gitignore
+.claude
+README.md
+tools
+*.log
