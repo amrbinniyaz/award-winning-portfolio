@@ -20,6 +20,15 @@
 
   var VISIT_KEY = 'portfolio_visits';
 
+  /* Boot timings, all overridable from config.js. The whole sequence sets LCP,
+     because content held behind it doesn't count as painted — so these numbers
+     are a UX decision and a performance one at the same time. */
+  var _pc = (window.SiteConfig && window.SiteConfig.preloader) || {};
+  var BIOS_LINE_MS = _pc.biosLineMs || 55;
+  var BIOS_HOLD_MS = _pc.biosHoldMs || 260;
+  var BAR_TICK_MS  = _pc.barTickMs  || 26;
+  var BAR_STEP     = _pc.barStep    || [4, 5];
+
   // SMPTE-style bar colours, top block then the darker bottom strip.
   var BARS_TOP = ['#bfbfbf', '#bfbf00', '#00bfbf', '#00bf00', '#bf00bf', '#bf0000', '#0000bf'];
   var BARS_BOT = ['#0000bf', '#131313', '#bf00bf', '#131313', '#00bfbf', '#131313', '#bfbfbf'];
@@ -251,14 +260,16 @@
         el.bios.textContent += lines[i] + '\n';
         i++;
         // Blank lines shouldn't cost a full beat.
-        setTimeout(typeLine, lines[i - 1] === '' ? 30 : 85);
+        setTimeout(typeLine, lines[i - 1] === '' ? Math.round(BIOS_LINE_MS * 0.35) : BIOS_LINE_MS);
         return;
       }
       var caret = document.createElement('span');
       caret.className = 'bios-cursor';
       caret.textContent = ' ';
       el.bios.appendChild(caret);
-      setTimeout(done, 700);
+      // Was a flat 700ms of blinking caret and nothing else — the single
+      // largest block of dead time in the whole sequence.
+      setTimeout(done, BIOS_HOLD_MS);
     })();
   }
 
@@ -409,25 +420,27 @@
     var n = 0;
     updateProgress(0);
     loadTimer = setInterval(function () {
-      n += Math.random() > 0.4 ? 3 : 2;
+      n += Math.random() > 0.4 ? BAR_STEP[1] : BAR_STEP[0];
       if (n >= 100) {
         n = 100;
         clearInterval(loadTimer);
         loadTimer = null;
+        // Two short beats, not the old 260 + 250. Long enough to register the
+        // bar hitting 100%, short enough not to feel like a stall.
         setTimeout(function () {
           if (finished) return;
           if (el.inner) {
-            el.inner.style.transition = 'opacity 0.25s ease';
+            el.inner.style.transition = 'opacity 0.18s ease';
             el.inner.style.opacity = '0';
           }
           setTimeout(function () {
             if (finished) return;
             showBios(reveal);
-          }, 250);
-        }, 260);
+          }, 170);
+        }, 130);
       }
       updateProgress(n);
-    }, 42);
+    }, BAR_TICK_MS);
   }
 
   window.Preloader = { init: init, reveal: reveal };

@@ -14,12 +14,21 @@ window.SiteConfig = {
     right: { label: 'ILLUSTRATION', href: 'projects.html?filter=Illustration', index: '02', color: '#22c55e' },
   },
 
-  /* Boot sequence. */
+  /* Boot sequence.
+     Retimed to ~2.2s total. The old 3.7s wasn't richer — 1.2s of it was dead
+     air (a pause, a fade, and a 700ms hold on a finished BIOS screen). Every
+     element still plays; nothing idles between them. Content held behind the
+     boot doesn't count as painted, so this duration sets LCP directly. */
   preloader: {
     message: ['STREAM', 'STARTING', 'SOON'],
     skipAfterVisits: 2,      // show "press space to skip" from the Nth visit on
-    glitchBurstsAt: [400, 1100],
-    glitchBurstMs: 220,
+    // Both bursts have to land inside the (now shorter) progress bar.
+    glitchBurstsAt: [240, 660],
+    glitchBurstMs: 200,
+    barTickMs: 26,           // progress bar tick interval
+    barStep: [4, 5],         // percent added per tick (random between)
+    biosLineMs: 55,          // per-line typing speed
+    biosHoldMs: 260,         // pause after the caret appears
   },
 
   /* Motion feel. Lower = heavier / more lag. */
