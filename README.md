@@ -83,6 +83,33 @@ pointer smoothing → contours → fluid → liquid mask
 - `Fluid.getAlphaAt()` does a GPU readback, which stalls the pipeline. It's
   called once per frame for one element. Don't put it in a loop.
 
+### Analytics
+
+Self-hosted [Umami](https://umami.is) at `analytics.amrniyaz.com`, running as a
+Dokploy compose service (`umami` + its own Postgres) next to the site. Chosen
+over GA because a ~2kB cookieless tracker doesn't undo the work in the section
+above, and because much of this site's audience blocks Google's.
+
+Configured in `config.js` under `analytics`:
+
+| Key | Meaning |
+|---|---|
+| `src` | tracker URL |
+| `websiteId` | issued by the Umami dashboard when the site is added |
+| `domains` | hosts the tracker accepts events from — keeps localhost out |
+
+`analytics.js` loads nothing while `websiteId` is empty, so the site runs fine
+with analytics switched off, and dev traffic never reaches the server.
+
+Two events beyond pageviews: `cv-download` (the PDF link on the resume) and
+`contact-submit` (fired after the compose form validates, not on every submit).
+Add more with `Analytics.track('name')` — it's a no-op if the tracker was
+blocked or never loaded.
+
+Links posted anywhere should carry UTM params, or the referrer arrives stripped
+by LinkedIn's in-app browser and mail clients and lands under Direct:
+`amrniyaz.com/?utm_source=linkedin&utm_medium=profile`.
+
 ### Accessibility
 
 - `prefers-reduced-motion` skips the boot sequence entirely and holds the

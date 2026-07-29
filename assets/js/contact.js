@@ -57,6 +57,10 @@
 
         note.classList.remove('is-error');
 
+        // Recorded here rather than on the submit event, so a submit rejected
+        // for an empty message above doesn't count as someone getting in touch.
+        if (window.Analytics) window.Analytics.track('contact-submit');
+
         window.location.href = buildMailto(name, email, message);
 
         note.textContent = 'Opening your mail app. If nothing happens, email '

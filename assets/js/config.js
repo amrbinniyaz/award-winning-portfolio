@@ -44,4 +44,16 @@ window.SiteConfig = {
 
   /* Fluid tint — the colour the fluid resolves toward. */
   fluid: { r: 194, g: 194, b: 194, edgeLow: 0.08, edgeHigh: 0.09 },
+
+  /* Analytics — self-hosted Umami.
+     `websiteId` is issued by the Umami dashboard when the site is added there.
+     Until it's filled in, analytics.js loads nothing and sends nothing, so
+     this is safe to ship ahead of the server being up.
+     `domains` is enforced by the tracker itself: events from any other host
+     are dropped, which is what keeps localhost out of the numbers. */
+  analytics: {
+    src: 'https://analytics.amrniyaz.com/script.js',
+    websiteId: '797448ab-23fc-4348-994d-87bc46f3a7f4',
+    domains: 'amrniyaz.com,www.amrniyaz.com',
+  },
 };
