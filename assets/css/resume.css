@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    RESUME — CRT system readout
    The CV presented as a machine spec sheet: a signal trace for
-   career history, segmented meters for capability levels.
+   career history, grouped tag lists for capabilities.
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Spec strip ──────────────────────────────────────────── */
@@ -180,10 +180,10 @@
   color: rgba(17, 17, 17, 0.72);
 }
 
-/* ── Capability meters ───────────────────────────────────── */
+/* ── Capability groups ───────────────────────────────────── */
 .skill-groups {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: clamp(30px, 5vw, 72px);
 }
 
@@ -199,58 +199,9 @@
   border-bottom: 1px solid var(--border);
 }
 
-.skill {
-  margin-bottom: 22px;
-}
-
-.skill-label {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 9px;
-}
-
-.skill-name {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--fg);
-}
-
-.skill-value {
-  font-family: var(--font-mono);
-  font-size: 16px;
-  color: rgba(17, 17, 17, 0.5);
-}
-
-/* Segmented bar — same dash rhythm as the boot screen's loader, so the
-   resume reads as part of the same machine. */
-.meter {
-  position: relative;
-  height: 10px;
-  background: rgba(17, 17, 17, 0.07);
-  overflow: hidden;
-}
-
-.meter-fill {
-  display: block;
-  height: 100%;
-  width: 0;
-  background: repeating-linear-gradient(
-    to right,
-    var(--fg) 0px,
-    var(--fg) 7px,
-    transparent 7px,
-    transparent 11px
-  );
-  transition: width 1.15s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Infrastructure has no levels on the source CV, so it renders with the
-   shared .tag-list / .tag primitives from projects.css rather than as
-   invented numbers. */
+/* The source CV states capabilities as lists, not levels, so each group
+   renders with the shared .tag-list / .tag primitives from projects.css
+   rather than as meters against invented numbers. */
 
 /* ── Closing ─────────────────────────────────────────────── */
 .resume-outro {
@@ -287,6 +238,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .trace-item { opacity: 1 !important; transform: none !important; }
-  .meter-fill { transition: none !important; }
   .status-live::before { animation: none; }
 }

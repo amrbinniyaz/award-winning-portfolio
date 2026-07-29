@@ -5,65 +5,9 @@
  * from a data file (as projects.js does). A CV should be readable and
  * crawlable without JavaScript, and it has no filtering or routing to justify
  * client-side rendering. JS here only animates.
- *
- * Meters fill from 0 to their `data-level` once scrolled into view, so the
- * levels read as instrumentation coming online rather than static bars.
  */
 (function () {
   'use strict';
-
-  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function fillMeters() {
-    var meters = Array.prototype.slice.call(document.querySelectorAll('.meter-fill'));
-    if (!meters.length) return;
-
-    if (REDUCED) {
-      meters.forEach(function (m) { m.style.width = (m.dataset.level || 0) + '%'; });
-      return;
-    }
-
-    // Reuse the shared reveal sweep rather than a second scroll mechanism.
-    // It reveals by adding a class, so watch a proxy and read it back.
-    var pending = meters.slice();
-    var ticking = false;
-
-    function sweep() {
-      ticking = false;
-      var limit = window.innerHeight * 0.9;
-
-      for (var i = pending.length - 1; i >= 0; i--) {
-        var m = pending[i];
-        if (m.getBoundingClientRect().top >= limit) continue;
-
-        // Stagger down the column so a group fills in sequence.
-        (function (node, delay) {
-          setTimeout(function () {
-            node.style.width = (node.dataset.level || 0) + '%';
-          }, delay);
-        })(m, (pending.length - 1 - i) * 90);
-
-        pending.splice(i, 1);
-      }
-
-      if (!pending.length) detach();
-    }
-
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(sweep);
-    }
-
-    function detach() {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    sweep();
-  }
 
   function wireNavigation() {
     document.addEventListener('click', function (e) {
@@ -97,7 +41,6 @@
       else Array.prototype.forEach.call(items, function (i) { i.classList.add('is-in'); });
     });
 
-    fillMeters();
     wireNavigation();
 
     if (window.Contours) window.Contours.init();
