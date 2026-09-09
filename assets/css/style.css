@@ -113,7 +113,7 @@ img { display: block; max-width: 100%; }
 body.boot-pending .bg-canvas,
 body.boot-pending .fluid-canvas { opacity: 0; }
 
-.fluid-canvas { mix-blend-mode: multiply; }
+.fluid-canvas { mix-blend-mode: normal; }
 
 .bg-noise {
   position: absolute;
@@ -271,15 +271,9 @@ body.boot-pending .portrait-section { opacity: 0; }
   user-select: none;
 }
 
-/* The illustration is revealed by the gooey mask; the canvas copy is
-   revealed by the fluid. Two independent reveal channels over one base. */
-.portrait-illustration {
-  mask: url(#liquidMask);
-  -webkit-mask: url(#liquidMask);
-}
-
-.illustration-canvas { pointer-events: none; }
-body.boot-pending .illustration-canvas { opacity: 0; }
+/* Original images remain a static fallback until both GPU textures load. */
+.portrait-illustration { display: none; }
+.gpu-portrait .portrait-base { visibility: hidden; }
 
 /* ── Portrait reveal: CRT signal lock ─────────────────────
    Blooms in over-bright and desaturated, dips once, then settles — the look
@@ -856,4 +850,55 @@ html.is-entering .site-nav       { animation: enterDown  0.75s cubic-bezier(0.22
   }
   body.boot-pending .portrait-section { transform: translateX(-50%) !important; }
   body.boot-pending .name-section     { transform: none !important; }
+}
+
+/* Landing art direction: a close portrait, ink on warm paper, colour carried
+   by the fluid. Keep other portfolio pages on their existing design tokens. */
+.portfolio-home { --bg: #f2efe8; --fg: #292827; }
+.portfolio-home .bg-layer {
+  background: radial-gradient(ellipse at 50% 40%, #faf7f0, #e9e5dd);
+}
+.portfolio-home .portrait-section {
+  width: min(110vh, 108vw, 1040px);
+  bottom: -14vh;
+}
+.portfolio-home .portrait-frame {
+  -webkit-mask-image: linear-gradient(#000 88%, transparent);
+  mask-image: linear-gradient(#000 88%, transparent);
+}
+.portfolio-home .portrait-base { filter: grayscale(.76) sepia(.08); }
+.portfolio-home .name-section { bottom: 2.6vh; z-index: 3; }
+.portfolio-home .page-grain-canvas { opacity: .026; }
+.portfolio-home .page-scanlines { opacity: .48; }
+.portfolio-home .bg-noise { opacity: .026; }
+.portfolio-home .side { gap: 16px; }
+.portfolio-home .side-nr { font-size: clamp(70px, 11vh, 125px); }
+.portfolio-home .side--left { left: 4.7vw; }
+.portfolio-home .side--right { right: 4.7vw; }
+.portfolio-home .side-text { font-size: 12px; letter-spacing: .23em; }
+.portfolio-home .nav-mark { font-size: 16px; }
+@media (max-width: 900px) {
+  .portfolio-home .portrait-section { width: min(108vh, 116vw); bottom: -10vh; }
+}
+@media (max-width: 600px) {
+  .portfolio-home .portrait-section { width: min(88svh, 142vw); bottom: 7svh; }
+  .portfolio-home .name-section { bottom: 7svh; }
+  .portfolio-home .side--left { left: 7vw; }
+  .portfolio-home .side--right { right: 7vw; }
+  .portfolio-home .side-text { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-home .fluid-canvas { display: none; }
+  .portfolio-home .portrait-base { visibility: visible; }
+}
+
+/* Drift a cached contour plate on the compositor instead of tracing hundreds
+   of thousands of marching-square cells in the fluid's animation loop. */
+.portfolio-home .bg-canvas { animation: contourDrift 32s ease-in-out infinite alternate; }
+@keyframes contourDrift {
+  from { transform: scale(1.05) translate3d(-.5%, -.4%, 0); }
+  to   { transform: scale(1.05) translate3d(.5%, .4%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-home .bg-canvas { animation: none; }
 }

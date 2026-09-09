@@ -6,8 +6,8 @@
  * own loop, so ordering is explicit and there is one place to profile.
  *
  * Per-frame order matters:
- *   pointer smoothing → contours → fluid → liquid mask → slide/parallax →
- *   cursor → nav probe → grain
+ *   pointer smoothing → contours → slide/parallax → portrait bounds →
+ *   fluid composition → cursor → grain
  */
 (function () {
   'use strict';
@@ -27,7 +27,7 @@
 
   var pointerX = 0.5, pointerY = 0.5;        // normalized, raw
   var smoothX = 0.5, smoothY = 0.5;          // normalized, eased
-  var prevClientX = 0, prevClientY = 0;
+  var previousX = 0.5, previousY = 0.5, pointerActive = false;
 
   var side = null;                            // 'left' | 'center' | 'right'
   var slideOffset = 0, slideTarget = 0, slideReady = false;
@@ -35,11 +35,14 @@
 
   var isIdle = true, idleTimer = null, idleClock = 0, idleSplatClock = 0;
 
-  var lastFrame = 0;
+  var lastFrame = 0, frameId = null, grainDraws = 0;
 
   var slideGroup, portraitSection, nameSection;
 
   var lerp = function (a, b, t) { return a + (b - a) * t; };
+
+  // Convert 60Hz tuning to elapsed-time easing for high-refresh displays.
+  function ease(value, dt) { return 1 - Math.pow(1 - value, dt * 60); }
 
   /* ── Idle behaviour ──────────────────────────────────────────
      After a period of stillness the fluid drives itself, so the page never
@@ -49,23 +52,15 @@
   function idleOrbit(dt) {
     idleClock += dt;
 
-    // Drift the liquid mask on its own slow path.
-    if (window.LiquidMask) {
-      window.LiquidMask.setTarget(
-        0.5 + Math.cos(idleClock * 0.44) * 0.32,
-        0.38 + Math.sin(idleClock * 0.63) * 0.30
-      );
-    }
-
     if (!window.Fluid || !window.Fluid.ready) return;
 
     idleSplatClock += dt;
     if (idleSplatClock < 0.038) return;   // ~26Hz is plenty
-    idleSplatClock = 0;
+    idleSplatClock %= 0.038;
 
     var cx = window.innerWidth * 0.50;
-    var cy = window.innerHeight * 0.44;
-    var baseR = Math.min(window.innerWidth, window.innerHeight) * 0.15;
+    var cy = window.innerHeight * 0.46;
+    var baseR = Math.min(window.innerWidth, window.innerHeight) * 0.27;
 
     [
       { speed: 0.52, radius: baseR * 1.00, phase: 0 },
@@ -76,8 +71,8 @@
       window.Fluid.splat(
         cx + Math.cos(a) * s.radius,
         cy + Math.sin(a) * s.radius,
-        -Math.sin(a) * s.speed * 0.0018,
-        Math.cos(a) * s.speed * 0.0018
+        -Math.sin(a) * s.speed * 0.0035,
+        Math.cos(a) * s.speed * 0.0035
       );
     });
   }
@@ -88,28 +83,38 @@
     var dt = Math.min((ts - lastFrame) / 1000, 0.05);
     lastFrame = ts;
 
-    smoothX = lerp(smoothX, pointerX, EASE.mouse || 0.08);
-    smoothY = lerp(smoothY, pointerY, EASE.mouse || 0.08);
+    frameId = null;
+    if (document.hidden) return;
+    smoothX = lerp(smoothX, pointerX, ease(EASE.mouse || 0.16, dt));
+    smoothY = lerp(smoothY, pointerY, ease(EASE.mouse || 0.16, dt));
 
-    if (isIdle) {
-      idleOrbit(dt);
-    } else {
-      idleSplatClock = 0;
-      if (window.LiquidMask) window.LiquidMask.setTarget(pointerX, pointerY);
+    // Events only update the target. Inject a bounded, continuous stroke once
+    // per rendered frame, independent of mouse polling rate.
+    if (!reduced) {
+      if (isIdle) idleOrbit(dt);
+      else if (pointerActive && window.Fluid && window.Fluid.ready) {
+        var dx = smoothX - previousX, dy = smoothY - previousY;
+        var distance = Math.hypot(dx * innerWidth, dy * innerHeight);
+        if (distance > 0.3) {
+          var samples = Math.min(5, Math.max(1, Math.ceil(distance / 24)));
+          for (var i = 1; i <= samples; i++) {
+            window.Fluid.splat(
+              lerp(previousX, smoothX, i / samples) * innerWidth,
+              lerp(previousY, smoothY, i / samples) * innerHeight,
+              dx / samples, dy / samples
+            );
+          }
+        }
+      }
     }
+    previousX = smoothX;
+    previousY = smoothY;
 
-    if (window.Contours) window.Contours.draw(dt);
-    if (window.Fluid && window.Fluid.ready) window.Fluid.tick();
-    if (window.LiquidMask) {
-      window.LiquidMask.update(
-        window.__contourTime || 0,
-        EASE.mask || 0.012
-      );
-    }
+    if (window.Contours) window.Contours.draw(reduced ? 0 : dt);
 
     // Content group slides away from the cursor's side.
     if (slideReady && slideGroup) {
-      slideOffset = lerp(slideOffset, slideTarget, EASE.slide || 0.045);
+      slideOffset = lerp(slideOffset, slideTarget, ease(EASE.slide || 0.055, dt));
       slideGroup.style.transform = 'translateX(' + slideOffset.toFixed(2) + 'px)';
     }
 
@@ -117,9 +122,9 @@
     // which is what sells one as distant and the other as close.
     if (parallaxReady) {
       var target = pointerY - 0.5;
-      paraPortrait = lerp(paraPortrait, target, 0.022);
-      paraName = lerp(paraName, target, 0.09);
-      if (portraitSection) {
+      paraPortrait = lerp(paraPortrait, target, ease(0.035, dt));
+      paraName = lerp(paraName, target, ease(0.09, dt));
+      if (portraitSection && !document.body.classList.contains('gpu-portrait')) {
         portraitSection.style.transform =
           'translateX(-50%) translateY(' + (paraPortrait * -45).toFixed(1) + 'px)';
       }
@@ -130,38 +135,40 @@
       }
     }
 
-    if (window.Cursor) window.Cursor.update(EASE.ring || 0.12);
-    if (window.Nav) window.Nav.update();
-    if (window.CRTOverlay) window.CRTOverlay.drawGrain();
+    if (window.LiquidMask) window.LiquidMask.update(slideOffset, paraPortrait * -45);
+    if (!reduced && window.Fluid && window.Fluid.ready) window.Fluid.tick(dt);
+    if (window.Cursor) window.Cursor.update(reduced ? 1 : ease(EASE.ring || 0.16, dt));
+    // One grain plate is enough for the paper texture. Repainting a full
+    // screen noise layer while the fluid moves adds avoidable raster work.
+    if (!reduced && window.CRTOverlay && grainDraws < 5) {
+      window.CRTOverlay.drawGrain();
+      grainDraws++;
+    }
 
-    requestAnimationFrame(frame);
+    if (!reduced) frameId = requestAnimationFrame(frame);
   }
 
   /* ── Pointer ─────────────────────────────────────────────── */
 
   function onPointerMove(e) {
-    // Inject velocity into the fluid, scaled to viewport fraction.
-    if (window.Fluid && window.Fluid.ready) {
-      window.Fluid.splat(
-        e.clientX, e.clientY,
-        (e.clientX - prevClientX) / window.innerWidth,
-        (e.clientY - prevClientY) / window.innerHeight
-      );
-    }
-    prevClientX = e.clientX;
-    prevClientY = e.clientY;
-
     pointerX = e.clientX / window.innerWidth;
     pointerY = e.clientY / window.innerHeight;
+    if (!pointerActive) {
+      // Never join the first pointer event to a phantom stroke from (0,0).
+      smoothX = previousX = pointerX;
+      smoothY = previousY = pointerY;
+      pointerActive = true;
+    }
+    if (reduced) {
+      if (window.Cursor) window.Cursor.update(1);
+      return;
+    }
 
     // The slide and nameplate swap are hover-model interactions: they answer
     // "which half is the cursor in", which is meaningless without a cursor.
     //
-    // This guard matters because tapping a touchscreen fires a SYNTHETIC
-    // mousemove. Without it, a single tap sets slideTarget to ±250px and the
-    // whole composition lurches sideways. The dedicated touchmove handler
-    // never sets slideTarget, but the synthetic event bypasses it entirely.
-    if (!HAS_FINE_POINTER) {
+    // Hybrid laptops can have a fine pointer AND touch: gate each event too.
+    if (!HAS_FINE_POINTER || e.pointerType === 'touch') {
       isIdle = false;
       clearTimeout(idleTimer);
       idleTimer = setTimeout(function () { isIdle = true; }, IDLE_MS);
@@ -177,11 +184,11 @@
       var names = CFG.names || {};
       if (next === 'left') {
         document.body.classList.add('cursor-left');
-        slideTarget = SLIDE_PX;
+        slideTarget = Math.min(SLIDE_PX, innerWidth * 0.13);
         if (window.Nameplate) window.Nameplate.set(names.left, true);
       } else if (next === 'right') {
         document.body.classList.add('cursor-right');
-        slideTarget = -SLIDE_PX;
+        slideTarget = -Math.min(SLIDE_PX, innerWidth * 0.13);
         if (window.Nameplate) window.Nameplate.set(names.right, true);
       } else {
         slideTarget = 0;
@@ -233,8 +240,8 @@
     nameSection = document.getElementById('nameSection');
 
     if (window.Contours) window.Contours.init();
-    if (window.Fluid) {
-      if (window.Fluid.init()) window.Fluid.setBackground('assets/images/fluid-bg.webp');
+    if (window.Fluid && !reduced) {
+      if (window.Fluid.init()) window.Fluid.setBackground('assets/images/fluid-landscape.svg');
     }
     if (window.LiquidMask) window.LiquidMask.init();
     if (window.Nameplate) window.Nameplate.init();
@@ -244,46 +251,75 @@
 
     wireSideNav();
 
-    document.addEventListener('mousemove', onPointerMove, { passive: true });
-    document.addEventListener('mouseleave', function () { isIdle = true; });
-
-    // Touch devices get fluid on drag, but no slide/parallax (no hover model).
-    document.addEventListener('touchmove', function (e) {
-      var t = e.touches[0];
-      if (!t) return;
-      if (window.Fluid && window.Fluid.ready) {
-        window.Fluid.splat(
-          t.clientX, t.clientY,
-          (t.clientX - prevClientX) / window.innerWidth,
-          (t.clientY - prevClientY) / window.innerHeight
-        );
+    document.addEventListener('pointermove', onPointerMove, { passive: true });
+    document.addEventListener('pointerleave', function () {
+      isIdle = true;
+      pointerActive = false;
+      slideTarget = 0;
+    });
+    document.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') {
+        pointerActive = false;
+        onPointerMove(e);
       }
-      prevClientX = t.clientX;
-      prevClientY = t.clientY;
-      isIdle = false;
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(function () { isIdle = true; }, IDLE_MS);
     }, { passive: true });
+    document.addEventListener('pointerup', function (e) {
+      if (e.pointerType === 'touch') pointerActive = false;
+    }, { passive: true });
+    document.addEventListener('visibilitychange', function () {
+      if (frameId !== null) cancelAnimationFrame(frameId);
+      frameId = null;
+      pointerActive = false;
+      if (!document.hidden && !reduced) {
+        lastFrame = performance.now();
+        frameId = requestAnimationFrame(frame);
+      }
+    });
+    window.addEventListener('resize', function () {
+      if (reduced) frame(performance.now());
+    });
 
     if (window.Transition) window.Transition.enter();
-    if (window.Preloader) window.Preloader.init();
 
     // Hold the interactive layers back until the boot sequence hands over,
     // so nothing slides around behind the CRT. Both are cursor-driven, so
     // neither is armed on touch — parallax reads pointerY, which touchmove
     // also updates, and would jolt the portrait vertically on every tap.
     document.addEventListener('preloader:done', function () {
-      if (!HAS_FINE_POINTER) return;
+      if (!HAS_FINE_POINTER || reduced) return;
       setTimeout(function () { slideReady = true; }, 400);
       setTimeout(function () { parallaxReady = true; }, 900);
     });
 
+    if (window.Preloader) window.Preloader.init();
+
     idleTimer = setTimeout(function () { isIdle = true; }, IDLE_MS);
     requestAnimationFrame(function (ts) {
       lastFrame = ts;
-      requestAnimationFrame(frame);
+      frameId = requestAnimationFrame(frame);
     });
 
+    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function (event) {
+      reduced = event.matches;
+      if (reduced) {
+        slideReady = parallaxReady = false;
+        slideGroup.style.transform = '';
+        portraitSection.style.transform = '';
+        nameSection.style.transform = '';
+        document.body.classList.remove('gpu-portrait', 'cursor-left', 'cursor-right');
+        if (frameId !== null) cancelAnimationFrame(frameId);
+        frameId = null;
+        if (window.Contours) { window.Contours.resize(); window.Contours.draw(0); }
+      } else {
+        if (window.Fluid && !window.Fluid.ready && window.Fluid.init()) {
+          window.Fluid.setBackground('assets/images/fluid-landscape.svg');
+        }
+        if (window.LiquidMask) window.LiquidMask.init();
+        slideReady = parallaxReady = HAS_FINE_POINTER;
+        lastFrame = performance.now();
+        frameId = requestAnimationFrame(frame);
+      }
+    });
     document.body.classList.add('js-ready');
   }
 

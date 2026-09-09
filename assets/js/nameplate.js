@@ -138,7 +138,21 @@
     display = document.getElementById('nameDisplay');
     if (!display) return;
     var names = (window.SiteConfig && window.SiteConfig.names) || { left: 'YOUR', right: 'NAME' };
-    set(names.left, false);
+    set(names.right || names.left, false);
+    var resizeTimer;
+    function refreshMetrics() {
+      if (animating) {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(refreshMetrics, 200);
+        return;
+      }
+      display.querySelectorAll('.name-slot:not(.exiting)').forEach(function (slot) {
+        var ch = slot.querySelector('.name-char');
+        if (ch) slot.style.width = measure(ch.textContent).w + 'px';
+      });
+    }
+    window.addEventListener('resize', refreshMetrics);
+    if (document.fonts) document.fonts.ready.then(refreshMetrics);
   }
 
   window.Nameplate = {

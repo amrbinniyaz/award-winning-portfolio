@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1100" viewBox="0 0 1800 1100">
+  <defs>
+    <linearGradient id="paper" x2="0.7" y2="1">
+      <stop stop-color="#b7a8b8"/><stop offset=".55" stop-color="#d8b6b0"/><stop offset="1" stop-color="#edc7a6"/>
+    </linearGradient>
+    <linearGradient id="ochre" x2="1" y2="1">
+      <stop stop-color="#dfbc87"/><stop offset="1" stop-color="#eac09d"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#paper)" d="M0 0h1800v1100H0z"/>
+  <g fill="none" stroke="url(#ochre)">
+    <path stroke-width="36" d="M-160 45C160 330 350 22 675 66S1030 420 1950 25"/>
+    <path stroke-width="15" d="M-160 125C240 436 340 130 670 154S1090 466 1960 140"/>
+    <path stroke-width="4" d="M-160 171C240 474 340 186 670 207S1090 511 1960 200"/>
+    <path stroke-width="57" d="M-140 525C225 217 390 588 783 441S1275 198 1930 422"/>
+    <path stroke-width="8" d="M-140 580C225 275 390 644 783 498S1275 255 1930 477"/>
+    <path stroke-width="21" d="M-120 857C154 588 334 591 695 710S1350 862 1910 524"/>
+    <path stroke-width="5" d="M-120 898C154 629 334 632 695 751S1350 903 1910 565"/>
+    <path stroke-width="66" d="M-90 1150C169 910 382 802 713 912S1384 1099 1940 791"/>
+    <path stroke-width="11" d="M-90 1043C169 803 382 695 713 805S1384 992 1940 684"/>
+  </g>
+  <g fill="none" stroke="#937e93" stroke-width="2" opacity=".32">
+    <path d="M-100 50C300 460 400-100 890 194S1590 260 1900 80"/>
+    <path d="M-100 365C450 70 320 545 820 343S1460 140 1910 300"/>
+    <path d="M-100 737C450 460 520 917 1040 686S1460 459 1910 644"/>
+    <path d="M-100 979C450 702 520 1159 1040 928S1460 701 1910 886"/>
+  </g>
+</svg>

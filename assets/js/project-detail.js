@@ -24,7 +24,9 @@
     return node;
   }
 
-  function figure(src, alt) {
+  function figure(item, alt) {
+    var src = typeof item === 'string' ? item : item.src;
+    if (item.alt) alt = item.alt;
     var fig = el('figure', 'gallery-figure');
     var img = el('img');
     img.src = src;
@@ -32,6 +34,7 @@
     img.loading = 'lazy';
     img.decoding = 'async';
     fig.appendChild(img);
+    if (item.caption) fig.appendChild(el('figcaption', 'gallery-caption', item.caption));
     return fig;
   }
 
@@ -43,9 +46,11 @@
     // through the gallery-oriented category/year/index triple.
     var rows = cs
       ? [
-          ['Role', cs.role || '—'],
-          ['Timeline', cs.timeline || project.year || '—'],
-          ['Status', cs.status || '—'],
+          ['Client', cs.client],
+          ['Scope', cs.scope],
+          ['Role', cs.role],
+          ['Timeline', cs.timeline || project.year],
+          ['Status', cs.status],
           ['Category', project.category],
         ]
       : [
@@ -54,7 +59,7 @@
           ['Index', String(index + 1).padStart(2, '0') + ' / ' + String(projects.length).padStart(2, '0')],
         ];
 
-    rows.forEach(function (pair) {
+    rows.filter(function (pair) { return pair[1]; }).forEach(function (pair) {
       var wrapper = el('div', 'spec');
       wrapper.appendChild(el('dt', null, pair[0]));
       wrapper.appendChild(el('dd', null, pair[1]));
@@ -185,7 +190,7 @@
   function render(project, index) {
     document.title = project.title + ' — Amr Binniyaz';
     var desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute('content', project.title + ' — ' + project.category + ' work by Amr Binniyaz.');
+    if (desc) desc.setAttribute('content', project.description || project.title + ' — ' + project.category + ' work by Amr Binniyaz.');
 
     root.innerHTML = '';
 
@@ -203,16 +208,47 @@
     if (project.description) {
       head.appendChild(el('p', 'project-desc', project.description));
     }
+    var actions = el('div', 'project-actions');
+    if (project.video) {
+      var watch = el('a', 'project-action', 'Watch the walkthrough ↓');
+      watch.href = '#project-film';
+      actions.appendChild(watch);
+    }
+    var destination = project.website || project.liveUrl;
+    if (!destination && project.localPreview && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) destination = project.localPreview;
+    if (destination) {
+      var visit = el('a', 'project-action', project.website || project.liveUrl ? 'Visit the website ↗' : 'Open local preview ↗');
+      visit.href = destination;
+      visit.target = '_blank';
+      visit.rel = 'noopener noreferrer';
+      actions.appendChild(visit);
+    }
+    if (actions.children.length) head.appendChild(actions);
     root.appendChild(head);
 
     /* Hero */
     if (project.cover) {
       var hero = el('div', 'project-hero');
-      var heroImg = el('img');
-      heroImg.src = project.cover;
-      heroImg.alt = project.title;
-      heroImg.fetchPriority = 'high';
-      hero.appendChild(heroImg);
+      if (project.video) {
+        hero.id = 'project-film';
+        hero.classList.add('project-hero--film');
+        var film = el('video', 'project-film');
+        film.src = project.video;
+        film.poster = project.cover;
+        film.controls = true;
+        film.playsInline = true;
+        film.preload = 'none';
+        film.setAttribute('aria-label', project.title + ' website walkthrough');
+        hero.appendChild(film);
+        if (project.videoCaption) hero.appendChild(el('p', 'film-caption', project.videoCaption));
+        document.addEventListener('visibilitychange', function () { if (document.hidden) film.pause(); });
+      } else {
+        var heroImg = el('img');
+        heroImg.src = project.cover;
+        heroImg.alt = project.title;
+        heroImg.fetchPriority = 'high';
+        hero.appendChild(heroImg);
+      }
       root.appendChild(hero);
     }
 
@@ -262,7 +298,7 @@
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
 
       var href = link.getAttribute('href');
-      if (!href || href.charAt(0) === '#') return;
+      if (!href || href.charAt(0) === '#' || link.target === '_blank' || /^https?:/.test(href)) return;
 
       e.preventDefault();
 

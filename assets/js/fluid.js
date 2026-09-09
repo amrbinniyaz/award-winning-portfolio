@@ -13,21 +13,21 @@
  * dye, dye density is used as a MASK that reveals a background plate. That is
  * what produces the drifting metallic blob rather than a rainbow smear.
  *
- * Exposes: window.Fluid.{ init, step, splat, getAlphaAt, setBackground }
+ * Exposes: window.Fluid.{ init, tick, splat, setBackground, setPortrait, setPortraitRect }
  */
 (function () {
   'use strict';
 
   var CFG = {
-    SIM_RESOLUTION:       128,
-    DYE_RESOLUTION:       512,
-    DENSITY_DISSIPATION:  0.980,
-    VELOCITY_DISSIPATION: 0.995,
+    SIM_RESOLUTION:       96,
+    DYE_RESOLUTION:       384,
+    DENSITY_DISSIPATION:  0.988,
+    VELOCITY_DISSIPATION: 0.985,
     PRESSURE:             0.80,
-    PRESSURE_ITERATIONS:  20,
-    CURL:                 25,
-    SPLAT_RADIUS:         0.25,
-    SPLAT_FORCE:          6000,
+    PRESSURE_ITERATIONS:  12,
+    CURL:                 12,
+    SPLAT_RADIUS:         0.42,
+    SPLAT_FORCE:          2600,
   };
 
   // Phones and small laptops get a cheaper sim — the full one will pin a
@@ -45,7 +45,11 @@
   var programs = {};
   var blit;
   var bgTexture = null;
-  var lastTime = Date.now();
+  var backgroundURL = null, portraitURLs = null;
+  var portraitBase = null, portraitArt = null;
+  var portraitRect = [0, 0, 0, 0];
+  var backgroundAspect = 1;
+  var listenersBound = false;
   var ready = false;
 
   /* ── Shader sources ──────────────────────────────────────── */
@@ -194,23 +198,40 @@
     '}'
   ].join('\n');
 
-  /* Display: dye density becomes a mask over a background plate. */
+  /* One GPU pass composites the art, portrait and fluid with identical UVs. */
   var F_DISPLAY = [
     'precision highp float; precision highp sampler2D;',
     'varying vec2 vUv;',
-    'uniform sampler2D uTexture;',
-    'uniform sampler2D uBackground;',
+    'uniform sampler2D uTexture, uBackground, uPortrait, uArt;',
     'uniform vec3 uTint;',
-    'uniform vec2 uEdge;',
-    'uniform float uHasBg;',
+    'uniform vec2 uEdge, uDyeTexel, uBackgroundScale;',
+    'uniform vec4 uPortraitRect;',
+    'uniform float uHasBg, uHasPortrait;',
     'void main() {',
-    '  vec3 d = texture2D(uTexture, vUv).rgb;',
-    '  float density = max(d.r, max(d.g, d.b));',
-    // Narrow edge window = a crisp blob boundary rather than a soft haze.
-    '  float mask = smoothstep(uEdge.x, uEdge.y, density);',
-    '  vec3 col = uTint;',
-    '  if (uHasBg > 0.5) { col = texture2D(uBackground, vUv).rgb; }',
-    '  gl_FragColor = vec4(col, mask);',
+    '  float density = texture2D(uTexture, vUv).r;',
+    // Estimate coverage at the boundary to avoid a crawling one-texel edge.
+    '  float dx = texture2D(uTexture, vUv + vec2(uDyeTexel.x, 0.0)).r - texture2D(uTexture, vUv - vec2(uDyeTexel.x, 0.0)).r;',
+    '  float dy = texture2D(uTexture, vUv + vec2(0.0, uDyeTexel.y)).r - texture2D(uTexture, vUv - vec2(0.0, uDyeTexel.y)).r;',
+    '  float edge = max((uEdge.y - uEdge.x) * 0.5, length(vec2(dx, dy)) * 0.22);',
+    '  float threshold = (uEdge.x + uEdge.y) * 0.5;',
+    '  float mask = smoothstep(threshold - edge, threshold + edge, density);',
+    '  vec2 bgUv = (vec2(vUv.x, 1.0 - vUv.y) - 0.5) * uBackgroundScale + 0.5;',
+    '  vec3 color = uHasBg > 0.5 ? texture2D(uBackground, bgUv).rgb : uTint;',
+    '  vec4 result = vec4(color * mask, mask);',
+    '  if (uHasPortrait > 0.5) {',
+    '    vec2 uv = (vec2(vUv.x, 1.0 - vUv.y) - uPortraitRect.xy) / uPortraitRect.zw;',
+    '    if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0) {',
+    '      vec4 photo = texture2D(uPortrait, uv);',
+    '      vec4 art = texture2D(uArt, uv);',
+    // Quiet graphite outside the ink, original coloured portrait inside it.
+    '      float graphite = dot(photo.rgb, vec3(0.299, 0.587, 0.114));',
+    '      photo.rgb = mix(vec3(graphite) * vec3(1.04, 1.015, 0.99), photo.rgb, 0.24);',
+    '      vec4 portrait = mix(photo, art, mask);',
+    '      portrait.a *= 1.0 - smoothstep(0.88, 1.0, uv.y);',
+    '      result = vec4(portrait.rgb * portrait.a + result.rgb * (1.0 - portrait.a), portrait.a + result.a * (1.0 - portrait.a));',
+    '    }',
+    '  }',
+    '  gl_FragColor = result;',
     '}'
   ].join('\n');
 
@@ -225,7 +246,7 @@
 
     var halfFloat, supportLinear;
     if (isWebGL2) {
-      g.getExtension('EXT_color_buffer_float');
+      if (!g.getExtension('EXT_color_buffer_float')) return null;
       // Textures here are HALF_FLOAT (RGBA16F), and in WebGL2 linear filtering
       // of half-float is CORE — no extension required.
       //
@@ -238,6 +259,7 @@
       supportLinear = true;
     } else {
       halfFloat = g.getExtension('OES_texture_half_float');
+      if (!halfFloat) return null;
       // WebGL1 genuinely does need the extension for half-float filtering.
       supportLinear = !!g.getExtension('OES_texture_half_float_linear');
     }
@@ -246,7 +268,7 @@
 
     function fmt(internal, format, type) {
       if (!supportRenderTexture(g, internal, format, type)) {
-        if (!isWebGL2) return { internalFormat: g.RGBA, format: g.RGBA };
+        if (!isWebGL2) return null;
         if (internal === g.R16F)   return fmt(g.RG16F,   g.RG,   type);
         if (internal === g.RG16F)  return fmt(g.RGBA16F, g.RGBA, type);
         return null;
@@ -257,6 +279,8 @@
     var formatRGBA = isWebGL2 ? fmt(g.RGBA16F, g.RGBA, halfFloatTexType) : fmt(g.RGBA, g.RGBA, halfFloatTexType);
     var formatRG   = isWebGL2 ? fmt(g.RG16F,   g.RG,   halfFloatTexType) : fmt(g.RGBA, g.RGBA, halfFloatTexType);
     var formatR    = isWebGL2 ? fmt(g.R16F,    g.RED,  halfFloatTexType) : fmt(g.RGBA, g.RGBA, halfFloatTexType);
+
+    if (!formatRGBA || !formatRG || !formatR) return null;
 
     return {
       gl: g,
@@ -307,6 +331,7 @@
     var p = gl.createProgram();
     gl.attachShader(p, vs);
     gl.attachShader(p, fs);
+    gl.bindAttribLocation(p, 0, 'aPosition');
     gl.linkProgram(p);
     if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
       console.error('[fluid] program link failed:', gl.getProgramInfoLog(p));
@@ -411,6 +436,14 @@
     var filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
 
     gl.disable(gl.BLEND);
+    // Resizing must release all old attachments, including both ping-pong sides.
+    [dye, velocity, divergence, curl, pressure].forEach(function (target) {
+      if (!target) return;
+      (target.read ? [target.read, target.write] : [target]).forEach(function (fbo) {
+        gl.deleteTexture(fbo.texture);
+        gl.deleteFramebuffer(fbo.fbo);
+      });
+    });
 
     dye      = createDoubleFBO(dyeRes.width, dyeRes.height, rgba.internalFormat, rgba.format, texType, filtering);
     velocity = createDoubleFBO(simRes.width, simRes.height, rg.internalFormat,   rg.format,   texType, filtering);
@@ -479,24 +512,23 @@
     gl.uniform1i(programs.advection.uniforms.uVelocity, velocity.read.attach(0));
     gl.uniform1i(programs.advection.uniforms.uSource, velocity.read.attach(0));
     gl.uniform1f(programs.advection.uniforms.dt, dt);
-    gl.uniform1f(programs.advection.uniforms.dissipation, CFG.VELOCITY_DISSIPATION);
+    gl.uniform1f(programs.advection.uniforms.dissipation, Math.pow(CFG.VELOCITY_DISSIPATION, dt * 60));
     blit(velocity.write);
     velocity.swap();
 
     gl.uniform1i(programs.advection.uniforms.uVelocity, velocity.read.attach(0));
     gl.uniform1i(programs.advection.uniforms.uSource, dye.read.attach(1));
-    gl.uniform1f(programs.advection.uniforms.dissipation, CFG.DENSITY_DISSIPATION);
+    gl.uniform1f(programs.advection.uniforms.dissipation, Math.pow(CFG.DENSITY_DISSIPATION, dt * 60));
     blit(dye.write);
     dye.swap();
 
-    render();
   }
 
   function render() {
     var cfg = (window.SiteConfig && window.SiteConfig.fluid) || {};
 
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // Shader writes premultiplied RGBA directly; never blend into old frames.
+    gl.disable(gl.BLEND);
 
     programs.display.bind();
     gl.uniform1i(programs.display.uniforms.uTexture, dye.read.attach(0));
@@ -525,8 +557,22 @@
       gl.uniform1f(programs.display.uniforms.uHasBg, 0);
     }
 
+    var aspect = canvas.width / canvas.height;
+    gl.uniform2f(programs.display.uniforms.uBackgroundScale,
+      aspect < backgroundAspect ? aspect / backgroundAspect : 1,
+      aspect > backgroundAspect ? backgroundAspect / aspect : 1);
+    gl.uniform2f(programs.display.uniforms.uDyeTexel, dye.texelSizeX, dye.texelSizeY);
+    gl.uniform1f(programs.display.uniforms.uHasPortrait, portraitBase && portraitArt ? 1 : 0);
+    if (portraitBase && portraitArt) {
+      gl.activeTexture(gl.TEXTURE2);
+      gl.bindTexture(gl.TEXTURE_2D, portraitBase);
+      gl.uniform1i(programs.display.uniforms.uPortrait, 2);
+      gl.activeTexture(gl.TEXTURE3);
+      gl.bindTexture(gl.TEXTURE_2D, portraitArt);
+      gl.uniform1i(programs.display.uniforms.uArt, 3);
+      gl.uniform4fv(programs.display.uniforms.uPortraitRect, portraitRect);
+    }
     blit(null);
-    gl.disable(gl.BLEND);
   }
 
   /* ── Public API ──────────────────────────────────────────── */
@@ -536,8 +582,8 @@
     if (!ready) return;
     gl.disable(gl.BLEND);
 
-    var nx = x / canvas.clientWidth;
-    var ny = 1 - y / canvas.clientHeight;
+    var nx = x / window.innerWidth;
+    var ny = 1 - y / window.innerHeight;
     var aspect = canvas.width / canvas.height;
 
     programs.splat.bind();
@@ -555,59 +601,62 @@
     dye.swap();
   }
 
-  /**
-   * Dye density at a screen point. Used to invert UI that the blob passes
-   * under. Density ACCUMULATES per splat and is not normalized — a heavily
-   * splatted point reads well above 1 — so compare against a small threshold
-   * rather than treating this as a 0..1 fraction.
-   *
-   * This does a GPU readback, which stalls the pipeline: call it once a frame
-   * for one element, never per-element in a loop.
-   */
-  function getAlphaAt(screenX, screenY) {
-    if (!ready) return 0;
-    var nx = screenX / canvas.clientWidth;
-    var ny = 1 - screenY / canvas.clientHeight;
-    if (nx < 0 || nx > 1 || ny < 0 || ny > 1) return 0;
-
-    var px = Math.floor(nx * dye.read.width);
-    var py = Math.floor(ny * dye.read.height);
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, dye.read.fbo);
-    var buf = new Float32Array(4);
-    try {
-      gl.readPixels(px, py, 1, 1, gl.RGBA, gl.FLOAT, buf);
-    } catch (e) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      return 0;
-    }
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    return Math.max(buf[0], Math.max(buf[1], buf[2])) || 0;
-  }
-
-  function setBackground(url) {
-    if (!ready) return;
-    if (!url) { bgTexture = null; return; }
-
+  function loadTexture(url, onLoad) {
     var img = new Image();
-    img.crossOrigin = 'anonymous';
     img.onload = function () {
+      if (!ready || gl.isContextLost()) return;
       var tex = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-      bgTexture = tex;
+      onLoad(tex, img);
     };
-    img.onerror = function () { console.warn('[fluid] background failed to load:', url); };
+    img.onerror = function () { console.warn('[fluid] texture failed to load:', url); };
     img.src = url;
+  }
+
+  function setBackground(url) {
+    backgroundURL = url;
+    if (!ready || !url) return;
+    loadTexture(url, function (tex, img) {
+      if (bgTexture) gl.deleteTexture(bgTexture);
+      bgTexture = tex;
+      backgroundAspect = img.naturalWidth / img.naturalHeight;
+    });
+  }
+
+  function setPortrait(baseURL, artURL) {
+    portraitURLs = [baseURL, artURL];
+    if (!ready) return;
+    function reveal() {
+      if (portraitBase && portraitArt) document.body.classList.add('gpu-portrait');
+    }
+    loadTexture(baseURL, function (tex) {
+      if (portraitBase) gl.deleteTexture(portraitBase);
+      portraitBase = tex;
+      reveal();
+    });
+    loadTexture(artURL, function (tex) {
+      if (portraitArt) gl.deleteTexture(portraitArt);
+      portraitArt = tex;
+      reveal();
+    });
+  }
+
+  function setPortraitRect(rect) {
+    portraitRect[0] = rect.left / window.innerWidth;
+    portraitRect[1] = rect.top / window.innerHeight;
+    portraitRect[2] = rect.width / window.innerWidth;
+    portraitRect[3] = rect.height / window.innerHeight;
   }
 
   function resize() {
     if (!canvas) return;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.25, 1600 / window.innerWidth);
     var w = Math.floor(window.innerWidth * dpr);
     var h = Math.floor(window.innerHeight * dpr);
     if (canvas.width === w && canvas.height === h) return;
@@ -633,7 +682,7 @@
     // so NEAREST sampling doesn't look blocky.
     if (!ext.supportLinearFiltering) CFG.DYE_RESOLUTION = 256;
 
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.25, 1600 / window.innerWidth);
     canvas.width = Math.floor(window.innerWidth * dpr);
     canvas.height = Math.floor(window.innerHeight * dpr);
 
@@ -652,34 +701,41 @@
     initFramebuffers();
     ready = true;
 
-    window.addEventListener('resize', resize);
-
-    // Recover rather than dying silently if the GPU drops the context.
-    canvas.addEventListener('webglcontextlost', function (e) {
-      e.preventDefault();
-      ready = false;
-      console.warn('[fluid] context lost');
-    });
-    canvas.addEventListener('webglcontextrestored', function () {
-      console.info('[fluid] context restored');
-      init();
-    });
+    if (!listenersBound) {
+      listenersBound = true;
+      window.addEventListener('resize', resize);
+      canvas.addEventListener('webglcontextlost', function (e) {
+        e.preventDefault();
+        ready = false;
+        document.body.classList.remove('gpu-portrait');
+      });
+      canvas.addEventListener('webglcontextrestored', function () {
+        dye = velocity = divergence = curl = pressure = null;
+        bgTexture = portraitBase = portraitArt = null;
+        if (!init()) return;
+        if (backgroundURL) setBackground(backgroundURL);
+        if (portraitURLs) setPortrait(portraitURLs[0], portraitURLs[1]);
+      });
+    }
 
     return true;
   }
 
-  function tick() {
-    var now = Date.now();
-    var dt = Math.min((now - lastTime) / 1000, 0.016666);
-    lastTime = now;
-    step(dt);
+  function tick(dt) {
+    if (!ready) return;
+    // Use the shared frame clock; decay and motion have the same speed at
+    // 60/120Hz. Cap the step after a stall without a costly catch-up spiral.
+    var elapsed = Math.min(Math.max(dt || 1 / 60, 0.001), 1 / 30);
+    step(elapsed);
+    render();
   }
 
   window.Fluid = {
     init: init,
     tick: tick,
     splat: splat,
-    getAlphaAt: getAlphaAt,
+    setPortrait: setPortrait,
+    setPortraitRect: setPortraitRect,
     setBackground: setBackground,
     get ready() { return ready; },
     config: CFG,

@@ -18,7 +18,7 @@
   var grid = null;            // Float32Array height field, reused every frame
   var time = 0;
   var isMobile = window.innerWidth < 768;
-  var mobileDrawn = false;
+  var mobileDrawn = false, drawClock = 1;
 
   /* Peaks: [x, y, spreadX, spreadY, amplitude] in normalized space. */
   var PEAKS = [
@@ -38,7 +38,7 @@
   // thinning the map out.
   var LEVEL_MIN = 0.46;
   var LEVEL_MAX = 2.24;
-  var LEVEL_COUNT = 18;
+  var LEVEL_COUNT = 28;
   var INDEX_EVERY = 4;   // every Nth line is a heavier "index contour"
 
   function resize() {
@@ -46,6 +46,7 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     isMobile = window.innerWidth < 768;
+    drawClock = 1;
     mobileDrawn = false;   // resize clears the canvas, so allow one redraw
   }
 
@@ -56,29 +57,24 @@
 
     var t = time * 0.5;
     var stride = gw + 1;
-
-    for (var row = 0; row <= gh; row++) {
-      var ny = row / gh;
-      var base = row * stride;
-
+    grid.fill(0);
+    // A Gaussian is separable: evaluate each axis once per peak instead of
+    // repeating trig and exp nine times for every cell on every frame.
+    for (var p = 0; p < PEAKS.length; p++) {
+      var pk = PEAKS[p];
+      var cx = pk[0] + 0.014 * Math.sin(t * 0.08 + p * 2.1);
+      var cy = pk[1] + 0.010 * Math.cos(t * 0.10 + p * 1.7);
+      var amp = pk[4] * (1 + 0.18 * Math.sin(t * 0.28 + p * 0.9));
+      if (!pk.xSamples || pk.xSamples.length !== gw + 1) pk.xSamples = new Float32Array(gw + 1);
       for (var col = 0; col <= gw; col++) {
-        var nx = col / gw;
-        var h = 0;
-
-        for (var p = 0; p < PEAKS.length; p++) {
-          var pk = PEAKS[p];
-          // Each peak drifts and pulses on its own phase so the field never
-          // repeats visibly.
-          var driftX = 0.014 * Math.sin(t * 0.08 + p * 2.1);
-          var driftY = 0.010 * Math.cos(t * 0.10 + p * 1.7);
-          var amp = pk[4] * (1 + 0.18 * Math.sin(t * 0.28 + p * 0.9));
-
-          var dx = (nx - pk[0] - driftX) / pk[2];
-          var dy = (ny - pk[1] - driftY) / pk[3];
-          h += amp * Math.exp(-0.5 * (dx * dx + dy * dy));
-        }
-
-        grid[base + col] = h;
+        var dx = (col / gw - cx) / pk[2];
+        pk.xSamples[col] = amp * Math.exp(-0.5 * dx * dx);
+      }
+      for (var row = 0; row <= gh; row++) {
+        var dy = (row / gh - cy) / pk[3];
+        var gy = Math.exp(-0.5 * dy * dy);
+        var base = row * stride;
+        for (var col = 0; col <= gw; col++) grid[base + col] += pk.xSamples[col] * gy;
       }
     }
   }
@@ -88,7 +84,7 @@
 
     // Phones redraw once and stop — the field animation is not worth the
     // battery, and at that size the motion barely reads anyway.
-    if (isMobile) {
+    if (isMobile || document.body.classList.contains('portfolio-home') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       if (mobileDrawn) return;
       mobileDrawn = true;
     }
@@ -96,9 +92,13 @@
     time += dt;
     window.__contourTime = time;
 
+    drawClock += dt;
+    if (drawClock < 1 / 20) return;
+    drawClock = 0;
+
     var W = canvas.width, H = canvas.height;
-    var gw = isMobile ? 60 : 140;
-    var gh = isMobile ? 40 : 100;
+    var gw = isMobile ? 60 : 112;
+    var gh = isMobile ? 48 : 80;
 
     ctx.clearRect(0, 0, W, H);
     evaluateField(gw, gh);
@@ -115,10 +115,10 @@
       var isIndex = li % INDEX_EVERY === 0;
 
       ctx.beginPath();
-      ctx.lineWidth = isIndex ? 1.4 : 0.65;
+      ctx.lineWidth = isIndex ? 0.9 : 0.55;
       ctx.strokeStyle = isIndex
-        ? 'rgba(160,115,20,0.42)'
-        : 'rgba(180,140,50,0.17)';
+        ? 'rgba(120,112,104,0.22)'
+        : 'rgba(140,127,111,0.13)';
 
       for (var row = 0; row < gh; row++) {
         var r0 = row * stride, r1 = (row + 1) * stride;

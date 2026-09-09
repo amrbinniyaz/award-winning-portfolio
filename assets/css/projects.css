@@ -149,8 +149,8 @@ body.page-scroll .site-nav::before {
   padding: clamp(40px, 5vh, 68px) 0 clamp(80px, 12vh, 160px);
 }
 
-/* Offset the right column so the grid reads editorial rather than tabular. */
-.work-card:nth-child(even) { margin-top: clamp(0px, 8vw, 120px); }
+/* Aligned media frames keep website screenshots easy to compare. */
+.work-card:nth-child(even) { margin-top: 0; }
 
 .work-card {
   position: relative;
@@ -172,26 +172,23 @@ body.page-scroll .site-nav::before {
   position: relative;
   overflow: hidden;
   background: var(--fg-dimmer);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9;
 }
 
 .work-media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  /* Slight initial scale so the hover zoom never reveals an edge. */
-  transform: scale(1.02);
+  object-fit: contain;
+  /* Preserve the whole composition, including navigation and page edges. */
+  transform: none;
   transition: transform 1.05s var(--ease-out-quint), filter 0.7s var(--ease-out-quint);
-  filter: saturate(0.82) contrast(1.02);
+  filter: none;
 }
 
-/* Before a card is revealed its image sits further out and flatter, so it
-   settles into place as the card rises rather than arriving finished. Reuses
-   the transition above — no extra animation needed, and it hands straight
-   over to the hover zoom afterwards. */
+/* Reveal the card without scaling or cropping the artwork inside it. */
 .work-card:not(.is-in) .work-media img {
-  transform: scale(1.16);
-  filter: saturate(0.5) contrast(0.96);
+  transform: none;
+  filter: none;
 }
 
 /* Meta trails the image slightly, so the card resolves top-down. */
@@ -206,8 +203,8 @@ body.page-scroll .site-nav::before {
 
 .work-card:hover .work-media img,
 .work-card:focus-visible .work-media img {
-  transform: scale(1.075);
-  filter: saturate(1) contrast(1.04);
+  transform: none;
+  filter: none;
 }
 
 /* Sweep that crosses the image on hover — same CRT scan language. */
@@ -647,9 +644,126 @@ body.page-scroll .site-nav::before {
   /* Without this the un-revealed state would stick, leaving every image
      permanently zoomed and desaturated. */
   .work-card:not(.is-in) .work-media img {
-    transform: scale(1.02) !important;
-    filter: saturate(0.82) contrast(1.02) !important;
+    transform: none !important;
+    filter: none !important;
   }
 
   .work-media::after { display: none; }
 }
+
+/* Website previews keep their original proportions and remain separate from
+   the project link, so the pause control never nests inside an anchor. */
+.work-card-link { display: block; color: inherit; text-decoration: none; }
+.work-card-link:focus-visible { outline: 2px solid var(--fg); outline-offset: 8px; }
+.work-media--video, .work-media--scroll { aspect-ratio: 16 / 9; }
+.work-preview {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.work-preview.is-playing { opacity: 1; }
+.work-preview-label, .preview-toggle {
+  position: absolute;
+  z-index: 2;
+  padding: 8px 11px;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  line-height: 1.25;
+  background: rgba(251,251,251,.94);
+  color: #292827;
+}
+.work-preview-label { right: 14px; bottom: 14px; pointer-events: none; }
+.preview-toggle { top: 14px; right: 14px; border: 0; }
+.preview-toggle:focus-visible { outline: 2px solid #292827; outline-offset: 3px; }
+.preview-toggle[hidden] { display: none; }
+.work-card .work-media--scroll img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  transform: translateY(0);
+  filter: none;
+  transition: transform .65s cubic-bezier(.22,1,.36,1);
+}
+.work-card .work-media--video > img { transform: none; filter: none; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .work-card:hover .work-media--scroll img {
+    transform: translateY(var(--preview-travel, 0px));
+    transition: transform var(--preview-duration, 12s) linear;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .work-card-link:focus-visible .work-media--scroll img {
+    transform: translateY(var(--preview-travel, 0px));
+    transition: transform var(--preview-duration, 12s) linear;
+  }
+}
+.project-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.project-action {
+  display: inline-block;
+  padding: 13px 18px;
+  border: 1px solid var(--border-strong);
+  color: var(--fg);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-decoration: none;
+}
+.project-action:hover, .project-action:focus-visible { background: var(--fg); color: var(--bg); }
+.project-hero--film { background: #e7eddd; scroll-margin-top: 120px; }
+.project-film { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e7eddd; }
+.film-caption, .gallery-caption {
+  padding: 18px 22px;
+  margin: 0;
+  background: var(--bg);
+  color: rgba(17,17,17,.66);
+  font-size: 13px;
+  line-height: 1.65;
+  border-bottom: 1px solid var(--border);
+}
+@media (max-width: 600px) {
+  .work-preview-label, .preview-toggle { padding: 7px 9px; font-size: 8px; }
+  .work-preview-label { bottom: 9px; right: 9px; }
+  .preview-toggle { top: 9px; right: 9px; }
+  .film-caption, .gallery-caption { padding: 14px; font-size: 12px; }
+}
+
+/* Preview controls sit outside the artwork, keeping logos and navigation clear. */
+.work-preview-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 34px;
+  padding-bottom: 10px;
+}
+.work-preview-bar .work-index {
+  position: static;
+  color: rgba(17,17,17,.5);
+  mix-blend-mode: normal;
+  line-height: 1;
+}
+.work-preview-bar .work-preview-label {
+  position: static;
+  padding: 0;
+  margin-left: auto;
+  background: none;
+  color: rgba(17,17,17,.62);
+}
+.work-preview-bar .preview-toggle {
+  position: static;
+  padding: 6px 9px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--fg);
+}
+.page-scroll .page-grain-canvas { opacity: .018; }
+.page-scroll .page-scanlines { opacity: .32; }
+.page-scroll .bg-noise { opacity: .02; }

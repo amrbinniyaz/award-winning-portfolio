@@ -21,6 +21,102 @@
  * JPEG, everything capped at 1600px).
  */
 window.Projects = [
+{
+  "slug": "vegan-valley-3d",
+  "title": "Vegan Valley — Rooted in Motion",
+  "category": "Web Design",
+  "year": "2026",
+  "cover": "assets/images/work/vegan-valley-3d-cover.webp",
+  "previewVideo": "assets/video/vegan-valley-preview.mp4",
+  "video": "assets/video/vegan-valley-showcase.mp4",
+  "videoCaption": "A walkthrough of the rotating bottle, product range and farm-to-bottle story.",
+  "localPreview": "http://localhost:3003/",
+  "gallery": [
+    {
+      "src": "assets/images/work/vegan-valley-3d-flavours.webp",
+      "alt": "The 3D bottle showing the Classic Beet flavour and matching selection controls",
+      "caption": "Flavour selection rotates the bottle and updates its label, colour and surrounding product copy."
+    },
+    {
+      "src": "assets/images/work/vegan-valley-3d-range.webp",
+      "alt": "Colour-coded Vegan Valley juice cards",
+      "caption": "A colour-led product range connects the expressive introduction to practical browsing."
+    },
+    {
+      "src": "assets/images/work/vegan-valley-3d-story.webp",
+      "alt": "An illustrated chapter in the farm-to-bottle journey",
+      "caption": "The farm-to-bottle story breaks the process into four navigable chapters."
+    }
+  ],
+  "description": "An interactive plant-based brand website that brings the product into the page: a real-time 3D bottle, scroll-led storytelling and a colourful route from first impression to flavour discovery.",
+  "source": "",
+  "caseStudy": {
+    "role": "Design & development",
+    "timeline": "2026",
+    "status": "Interactive prototype",
+    "summary": "A bottle can do more than sit in a product photograph. For Vegan Valley, it becomes the thread through the experience: turning as the visitor scrolls, changing flavour on demand, and connecting a playful first impression to the ingredients inside.",
+    "problem": "The design challenge was to give a plant-based food brand a distinctive digital presence while keeping its products easy to understand. The experience needed to communicate flavour, ingredients and character, then let people browse juices, explore bowls and discover meal plans without getting lost in the animation.",
+    "approach": [
+      {
+        "title": "Build a recognisable visual world",
+        "body": "Sage green, botanical illustrations and handwritten notes establish a natural, tactile setting. Tall condensed headlines sit beside expressive italic type, while individual product colours carry through the flavour selector and catalogue. The bottle stays the visual focus rather than competing with a separate decorative scene."
+      },
+      {
+        "title": "Put the actual product in motion",
+        "body": "The bottle is built in Three.js with shaped geometry, a curved label, a ridged cap and studio-style lighting. Scrolling drives a continuous turn. Choosing another featured flavour animates the rotation while updating the juice colour and label, keeping the object and the surrounding copy in sync."
+      },
+      {
+        "title": "Give the scroll a purpose",
+        "body": "The opening composition transitions into an ingredient view using GSAP ScrollTrigger. Lenis and the scroll timeline share a clock, while the bottle eases toward the scroll position. Movement reveals information: the visitor sees the product from another angle as the ingredient list comes into view."
+      },
+      {
+        "title": "Make discovery useful",
+        "body": "Six juices can be filtered by greens, roots and citrus. Product details reveal ingredients, bowl tabs switch the food photography and description, and the meal-plan flow gathers preferences before preparing an editable WhatsApp enquiry. These interactions turn the visual introduction into a usable brand website."
+      },
+      {
+        "title": "Extend the story beyond the homepage",
+        "body": "A four-chapter farm-to-bottle experience follows the farm, harvest, cold press and finished bottle. Chapter links, directional controls and keyboard navigation let visitors choose their own pace. A separate 3D journey explores the same story as a spatial scene."
+      },
+      {
+        "title": "Keep the experience resilient",
+        "body": "A product photograph remains available until the first 3D frame is ready and returns if WebGL becomes unavailable. Rendering pauses when the bottle is off-screen or the tab is hidden, the drawing buffer is capped, and reduced-motion preferences simplify the animation. Responsive layouts keep the content usable on smaller screens."
+      }
+    ],
+    "stack": [
+      {
+        "group": "Website",
+        "items": [
+          "Vite",
+          "JavaScript modules",
+          "HTML & CSS"
+        ]
+      },
+      {
+        "group": "Motion & 3D",
+        "items": [
+          "Three.js",
+          "GSAP ScrollTrigger",
+          "Lenis"
+        ]
+      },
+      {
+        "group": "Delivery",
+        "items": [
+          "WebP imagery",
+          "MP4 video",
+          "Docker & Nginx"
+        ]
+      }
+    ],
+    "outcome": [
+      "A working 3D product hero with three selectable featured flavours and a continuous scroll-driven bottle turn.",
+      "Six filterable juices, three bowl selections and a meal-plan discovery flow within one consistent visual system.",
+      "A four-chapter brand story with direct chapter navigation, plus an additional real-time 3D journey.",
+      "Static-image and reduced-motion fallbacks keep the experience useful when animation is unavailable or unwanted."
+    ],
+    "note": "This case study documents the working prototype and its implemented features. The meal-plan flow prepares an enquiry; it does not place an order. Commercial performance and conversion results have not been measured."
+  }
+},
   {
     "slug": "sprxintel",
     "title": "SprXintel — School Intelligence",

@@ -23,8 +23,7 @@
   function setPosition(px, py) {
     x = px; y = py;
     if (dot) {
-      dot.style.left = px + 'px';
-      dot.style.top = py + 'px';
+      dot.style.translate = px + 'px ' + py + 'px';
     }
   }
 
@@ -32,8 +31,7 @@
     if (!ring) return;
     ringX += (x - ringX) * ease;
     ringY += (y - ringY) * ease;
-    ring.style.left = ringX.toFixed(2) + 'px';
-    ring.style.top = ringY.toFixed(2) + 'px';
+    ring.style.translate = ringX.toFixed(2) + 'px ' + ringY.toFixed(2) + 'px';
   }
 
   function init() {
@@ -42,21 +40,29 @@
     if (!dot || !ring) return;
 
     // Restore where the pointer was on the previous page, if we came from one.
-    var sx = parseFloat(sessionStorage.getItem('cursorX') || '');
-    var sy = parseFloat(sessionStorage.getItem('cursorY') || '');
-    if (!isNaN(sx) && !isNaN(sy)) {
+    var sx, sy;
+    try {
+      sx = parseFloat(sessionStorage.getItem('cursorX'));
+      sy = parseFloat(sessionStorage.getItem('cursorY'));
+    } catch (e) { /* Storage is optional in private browsing. */ }
+    if (Number.isFinite(sx) && Number.isFinite(sy)) {
       x = ringX = sx;
       y = ringY = sy;
     }
     setPosition(x, y);
-    ring.style.left = ringX + 'px';
-    ring.style.top = ringY + 'px';
+    ring.style.translate = ringX + 'px ' + ringY + 'px';
 
     document.addEventListener('mousemove', function (e) {
       setPosition(e.clientX, e.clientY);
-      sessionStorage.setItem('cursorX', e.clientX);
-      sessionStorage.setItem('cursorY', e.clientY);
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) update(1);
     }, { passive: true });
+
+    window.addEventListener('pagehide', function () {
+      try {
+        sessionStorage.setItem('cursorX', x);
+        sessionStorage.setItem('cursorY', y);
+      } catch (e) { /* Storage is optional. */ }
+    });
 
     // Grow the ring over anything interactive.
     document.addEventListener('mouseover', function (e) {

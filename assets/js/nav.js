@@ -146,13 +146,8 @@
     }
   }
 
-  /** Called once per frame — inverts the dots when the fluid passes under. */
-  function update() {
-    if (!dotsBtn || !window.Fluid || !window.Fluid.ready) return;
-    var r = dotsBtn.getBoundingClientRect();
-    var alpha = window.Fluid.getAlphaAt((r.left + r.right) / 2, (r.top + r.bottom) / 2);
-    dotsBtn.classList.toggle('fluid-over', alpha > 0.08);
-  }
+  // Kept for the shared page orchestrators; contrast is handled by CSS.
+  function update() {}
 
   function init() {
     buildNav();

@@ -50,18 +50,26 @@
     grid.innerHTML = '';
 
     projects.forEach(function (p, i) {
-      var card = document.createElement('a');
+      var card = document.createElement('article');
+      var link = document.createElement('a');
+      link.className = 'work-card-link';
+      var bar = document.createElement('div');
+      bar.className = 'work-preview-bar';
       card.className = 'work-card';
-      card.href = 'project.html?slug=' + encodeURIComponent(p.slug);
+      link.href = 'project.html?slug=' + encodeURIComponent(p.slug);
       card.dataset.category = p.category;
       card.dataset.slug = p.slug;
 
       var media = document.createElement('div');
-      media.className = 'work-media';
+      media.className = 'work-media' + (p.previewVideo ? ' work-media--video' : p.scrollPreview ? ' work-media--scroll' : '');
 
       var img = document.createElement('img');
-      img.src = p.cover;
-      img.alt = p.title;
+      img.src = p.scrollPreview ? (p.thumbnail && p.thumbnail.scroll || p.scrollPreview) : (p.thumbnail && p.thumbnail.src || p.cover);
+      if (p.thumbnail && !p.scrollPreview) {
+        img.width = p.thumbnail.width;
+        img.height = p.thumbnail.height;
+      }
+      img.alt = p.coverAlt || p.title;
       // The first row is above the fold; everything else can wait.
       img.loading = i < 2 ? 'eager' : 'lazy';
       img.decoding = 'async';
@@ -71,7 +79,26 @@
       index.textContent = String(i + 1).padStart(2, '0');
 
       media.appendChild(img);
-      media.appendChild(index);
+      if (p.previewVideo) {
+        var video = document.createElement('video');
+        video.className = 'work-preview';
+        video.dataset.preview = '';
+        video.dataset.src = p.previewVideo;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.preload = 'none';
+        video.poster = p.thumbnail && p.thumbnail.src || p.cover;
+        video.setAttribute('aria-hidden', 'true');
+        media.appendChild(video);
+      }
+      if (p.previewVideo || p.scrollPreview) {
+        var badge = document.createElement('span');
+        badge.className = 'work-preview-label';
+        badge.textContent = p.previewVideo ? '3D IN MOTION' : 'EXPLORE THE WEBSITE';
+        bar.appendChild(badge);
+      }
+      bar.insertBefore(index, bar.firstChild);
 
       var meta = document.createElement('div');
       meta.className = 'work-meta';
@@ -87,12 +114,23 @@
       meta.appendChild(title);
       meta.appendChild(tag);
 
-      card.appendChild(media);
-      card.appendChild(meta);
+      link.appendChild(media);
+      link.appendChild(meta);
+      card.appendChild(bar);
+      card.appendChild(link);
+      if (p.previewVideo) {
+        var toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'preview-toggle';
+        toggle.textContent = 'Play preview';
+        toggle.setAttribute('aria-label', 'Play animation preview for ' + p.title);
+        bar.appendChild(toggle);
+      }
       grid.appendChild(card);
     });
 
     observeCards();
+    if (window.ProjectMedia) window.ProjectMedia.init(grid);
   }
 
   /* ── Scroll reveal ───────────────────────────────────────── */
@@ -142,14 +180,16 @@
     }
 
     observeCards();
+    if (window.ProjectMedia) window.ProjectMedia.refresh();
   }
 
   /* ── Navigation ──────────────────────────────────────────── */
 
   function wireNavigation() {
     grid.addEventListener('click', function (e) {
-      var card = e.target.closest('.work-card');
-      if (!card) return;
+      var link = e.target.closest('.work-card-link');
+      if (!link) return;
+      var card = link.closest('.work-card');
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;  // let modified clicks through
 
       e.preventDefault();
@@ -160,9 +200,9 @@
       if (p) sessionStorage.setItem('txCover', p.cover);
 
       if (window.Transition) {
-        window.Transition.out(card.href, p ? p.title : 'PROJECT', '#1a1614');
+        window.Transition.out(link.href, p ? p.title : 'PROJECT', '#1a1614');
       } else {
-        window.location.href = card.href;
+        window.location.href = link.href;
       }
     });
   }

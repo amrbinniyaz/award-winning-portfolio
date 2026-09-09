@@ -33,17 +33,16 @@ window.SiteConfig = {
 
   /* Motion feel. Lower = heavier / more lag. */
   easing: {
-    mouse: 0.08,   // normalized pointer smoothing
-    ring:  0.12,   // cursor ring chasing the dot
-    slide: 0.045,  // content group sliding left/right
-    mask:  0.012,  // liquid metaball — deliberately very slow, this is the effect
+    mouse: 0.16,   // normalized pointer smoothing
+    ring:  0.16,   // cursor ring chasing the dot
+    slide: 0.055,  // content group sliding left/right
   },
 
-  slidePx: 250,    // how far the content group travels per side
+  slidePx: 180,    // how far the content group travels per side
   idleMs:  2200,   // stillness before the fluid starts orbiting on its own
 
   /* Fluid tint — the colour the fluid resolves toward. */
-  fluid: { r: 194, g: 194, b: 194, edgeLow: 0.08, edgeHigh: 0.09 },
+  fluid: { r: 194, g: 194, b: 194, edgeLow: 0.07, edgeHigh: 0.12 },
 
   /* Analytics — self-hosted Umami.
      `websiteId` is issued by the Umami dashboard when the site is added there.
