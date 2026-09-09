@@ -7,12 +7,17 @@
 
   <script>
     (function () {
-      var c = sessionStorage.getItem('txColor');
-      if (sessionStorage.getItem('txLabel') === null) return;
-      var d = document.createElement('div');
-      d.id = 'txInitCover';
-      d.style.cssText = 'position:fixed;inset:0;z-index:9890;background:' + (c || '#1a1614') + ';pointer-events:none';
-      document.documentElement.appendChild(d);
+      try {
+        if (sessionStorage.getItem('txLabel') === null) return;
+        document.documentElement.classList.add('skip-boot');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.documentElement.classList.add('tx-pending');
+        var cover = document.createElement('div');
+        cover.id = 'txInitCover';
+        cover.style.cssText = 'position:fixed;inset:0;z-index:9890;pointer-events:none';
+        cover.style.background = sessionStorage.getItem('txColor') || '#1a1614';
+        document.documentElement.appendChild(cover);
+      } catch (e) { /* Navigation remains usable without session storage. */ }
     })();
   </script>
 
@@ -25,8 +30,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
 
-  <link rel="stylesheet" href="assets/css/style.css?v=20260909-fluid5">
-  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260910-transitions2">
+  <link rel="stylesheet" href="assets/css/nav.css?v=20260910-menu-font1">
   <link rel="stylesheet" href="assets/css/projects.css">
   <link rel="stylesheet" href="assets/css/contact.css">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
@@ -162,11 +167,11 @@
   <script src="assets/js/config.js?v=20260909-fluid5"></script>
   <script src="assets/js/analytics.js" defer></script>
   <script src="assets/js/reveal.js" defer></script>
-  <script src="assets/js/transition.js" defer></script>
+  <script src="assets/js/transition.js?v=20260910-transitions2" defer></script>
   <script src="assets/js/contours.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/cursor.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/crt-overlay.js" defer></script>
-  <script src="assets/js/nav.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/nav.js?v=20260910-transitions2" defer></script>
   <script src="assets/js/contact.js" defer></script>
 </body>
 </html>

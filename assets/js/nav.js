@@ -90,7 +90,7 @@
 
     [
       { label: 'HOME', href: '/' },
-      { label: 'PROJECTS', href: 'projects.html' },
+      { label: 'PROJECTS', href: 'projects.html', color: navCfg.left && navCfg.left.color },
       { label: 'RESUME', href: 'resume.html' },
       { label: 'CONTACT', href: 'contact.html' },
     ].forEach(function (item) {
@@ -170,6 +170,7 @@
     overlay.addEventListener('click', function (e) {
       var a = e.target.closest('a');
       if (!a) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
       e.preventDefault();
       closeMenu();
       var href = a.getAttribute('href');

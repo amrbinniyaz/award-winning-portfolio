@@ -1,242 +1,149 @@
-/* ═══════════════════════════════════════════════════════════
-   RESUME — CRT system readout
-   The CV presented as a machine spec sheet: a signal trace for
-   career history, grouped tag lists for capabilities.
-   ═══════════════════════════════════════════════════════════ */
-
-/* ── Spec strip ──────────────────────────────────────────── */
-.spec-strip {
+/* Résumé: clear editorial hierarchy inside the portfolio's CRT frame. */
+body.resume-page { overflow-x: clip; overflow-y: visible; }
+.resume-head {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  margin-top: clamp(30px, 5vh, 52px);
-  background: var(--border);
-  border: 1px solid var(--border);
+  grid-template-columns: minmax(0, 1.65fr) minmax(290px, 1fr);
+  align-items: start;
+  gap: clamp(36px, 5vw, 80px);
+  padding-bottom: 54px;
+  border-bottom: 1px solid var(--border-strong);
+}
+.resume-page .page-eyebrow { color: #666; font-size: 10px; letter-spacing: .18em; }
+.resume-head .page-title {
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-weight: 900;
+  font-size: clamp(62px, 7.4vw, 116px);
+  line-height: .96;
+  letter-spacing: -.025em;
+}
+.resume-role { margin: 20px 0 0; font-size: clamp(18px, 1.65vw, 24px); line-height: 1.4; font-weight: 500; }
+.resume-head .page-sub { max-width: 61ch; margin-top: 18px; font-size: 16px; line-height: 1.75; color: #545454; }
+.resume-contact-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 25px; }
+.resume-contact-links a { color: var(--fg); font-size: 13px; text-decoration: none; border-bottom: 1px solid #b8b8b8; padding-bottom: 5px; }
+.resume-contact-links a span { margin-left: 9px; }
+.resume-profile { padding: 23px 25px; border: 1px solid var(--border-strong); background: rgba(251,251,251,.7); }
+.resume-small-label { margin: 0 0 18px; font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #6a6a6a; }
+.spec-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 18px; margin: 0; }
+.spec-cell dt { margin-bottom: 5px; color: #6a6a6a; font-size: 10px; }
+.spec-cell dd { margin: 0; font-family: var(--font-display); font-size: 23px; line-height: 1.15; }
+.resume-actions { margin-top: 25px; display: grid; gap: 12px; }
+.cv-download, .resume-print {
+  display: inline-flex; align-items: center; justify-content: space-between;
+  gap: 20px; padding: 15px 18px; font: 600 11px var(--font-ui);
+  letter-spacing: .07em; text-decoration: none; border: 1px solid var(--fg);
+  background: var(--fg); color: #fff; transition: background .2s, color .2s;
+}
+.cv-download:hover, .cv-download:focus-visible { background: #fff; color: var(--fg); }
+.cv-meta { font-size: 11px; font-weight: 400; }
+.resume-print { background: transparent; color: var(--fg); border-color: var(--border-strong); }
+.resume-print:hover { border-color: var(--fg); }
+.resume-print[hidden] { display: none; }
+.resume-page a:focus-visible, .resume-page button:focus-visible { outline: 2px solid var(--fg); outline-offset: 5px; }
+.resume-layout { display: grid; grid-template-columns: 185px minmax(0, 1fr); gap: clamp(40px, 6vw, 92px); align-items: start; padding-top: 42px; }
+.resume-index { position: sticky; top: 116px; padding-top: 9px; }
+.resume-index a { display: flex; gap: 14px; align-items: center; padding: 12px 0; font-size: 12px; text-decoration: none; color: #686868; border-bottom: 1px solid var(--border); }
+.resume-index a span { font-family: var(--font-mono); font-size: 14px; color: #8a8a8a; }
+.resume-index a[aria-current] { color: var(--fg); font-weight: 600; }
+.resume-index a[aria-current] span { color: #23813f; }
+.resume-content { min-width: 0; }
+.resume-content > .section { padding-top: 0; margin-bottom: 58px; scroll-margin-top: 118px; }
+.resume-page .section-title { font-family: 'Barlow Condensed', Impact, sans-serif; font-weight: 900; letter-spacing: -.01em; }
+.resume-page .section-head { margin-bottom: 30px; }
+.resume-page .section-nr { color: #686868; }
+.resume-page .case-outcomes { max-width: none; display: grid; gap: 0; }
+.resume-page .case-outcomes li { padding: 16px 0 16px 24px; border-top: 1px solid var(--border); font-size: 15px; line-height: 1.7; }
+.resume-page .case-outcomes li::before { top: 29px; background: #23813f; width: 9px; }
+.trace-item { display: grid; grid-template-columns: 158px minmax(0, 1fr); column-gap: 24px; padding: 24px 0; border-top: 1px solid var(--border); opacity: 1; }
+.trace-item:first-child { padding-top: 0; border-top: 0; }
+.trace-year { grid-column: 1; grid-row: 1 / span 3; padding-top: 5px; font-size: 11px; line-height: 1.6; color: #626262; }
+.trace-role { grid-column: 2; margin: 0 0 7px; font-family: 'Barlow Condensed', Impact, sans-serif; font-weight: 900; font-size: clamp(25px, 2.3vw, 34px); line-height: 1.08; }
+.trace-org { grid-column: 2; display: block; font-size: 11px; line-height: 1.6; font-weight: 500; color: #626262; margin-bottom: 12px; }
+.trace-desc { grid-column: 2; margin: 0; max-width: 68ch; font-size: 15px; line-height: 1.75; color: #4d4d4d; }
+.trace-item.is-current .trace-role::after { content: 'CURRENT'; display: inline-block; margin-left: 12px; padding: 5px 7px; vertical-align: middle; font: 500 8px var(--font-ui); letter-spacing: .09em; background: #e8eee7; color: #30643a; }
+.skill-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 34px; }
+.skill-group h3 { margin: 0 0 16px; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.resume-page .tag-list { gap: 7px; }
+.resume-page .tag { font-size: 10px; letter-spacing: .02em; padding: 7px 9px; text-transform: none; color: #4d4d4d; background: rgba(251,251,251,.65); }
+.resume-page .case-steps { grid-template-columns: 1fr; gap: 25px; }
+.resume-page .case-step { position: relative; padding-left: 38px; }
+.resume-page .case-step::before { position: absolute; top: 25px; left: 0; color: #686868; }
+.resume-page .case-step-title { font-family: 'Barlow Condensed', Impact, sans-serif; font-weight: 900; font-size: 29px; line-height: 1.1; }
+.resume-page .case-step-title a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.resume-page .case-step-title a span { font: 400 18px var(--font-ui); margin-left: 6px; }
+.resume-page .case-step-body { max-width: 70ch; }
+.resume-outro { display: flex; justify-content: space-between; align-items: center; gap: 25px; padding-top: 36px; margin-top: 35px; border-top: 1px solid var(--border); }
+.resume-outro p { max-width: 44ch; margin: 0; font-size: 14px; line-height: 1.7; color: #545454; }
+.resume-outro .cv-download { white-space: nowrap; }
+.resume-page .bg-layer { opacity: .45; }
+.resume-page .page-scanner-lines { display: none; }
+
+@media (max-width: 1050px) {
+  .resume-head { grid-template-columns: minmax(0, 1.3fr) minmax(265px, 1fr); gap: 30px; }
+  .resume-layout { grid-template-columns: 150px minmax(0, 1fr); gap: 35px; }
+  .trace-item { grid-template-columns: 1fr; gap: 0; }
+  .trace-year { grid-column: 1; grid-row: auto; margin-bottom: 9px; padding: 0; }
+  .trace-role, .trace-org, .trace-desc { grid-column: 1; }
+}
+@media (max-width: 760px) {
+  .resume-head { grid-template-columns: 1fr; gap: 30px; padding-bottom: 32px; }
+  .resume-head .page-title { font-size: clamp(62px, 12vw, 90px); }
+  .resume-profile { padding: 21px; }
+  .resume-actions { grid-template-columns: 1fr 1fr; }
+  .resume-layout { grid-template-columns: 1fr; gap: 32px; padding-top: 28px; }
+  .resume-index { position: static; display: flex; flex-wrap: wrap; gap: 0 22px; }
+  .resume-index .resume-small-label { flex: 0 0 100%; margin-bottom: 5px; }
+  .resume-index a { padding: 10px 0; font-size: 11px; }
+  .resume-content > .section { margin-bottom: 42px; scroll-margin-top: 95px; }
+  .resume-page .section-head { margin-bottom: 23px; }
+  .resume-page .section-title { font-size: 34px; }
+  .resume-outro { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 440px) {
+  .resume-actions, .skill-groups { grid-template-columns: 1fr; }
+  .resume-contact-links { gap: 16px; }
+  .resume-head .page-sub { font-size: 15px; }
+  .spec-cell dd { font-size: 21px; }
 }
 
-.spec-cell {
-  background: var(--bg);
-  padding: 20px 22px;
-}
-
-.spec-cell dt {
-  font-family: var(--font-ui);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(17, 17, 17, 0.52);
-  margin-bottom: 9px;
-}
-
-.spec-cell dd {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(17px, 1.7vw, 23px);
-  letter-spacing: 0.03em;
-  color: var(--fg);
-}
-
-/* Blinking status dot — the one "live" element on the page. */
-.status-live::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 9px;
-  border-radius: 50%;
-  background: var(--accent);
-  vertical-align: 1px;
-  animation: statusPulse 1.8s ease-in-out infinite;
-}
-
-@keyframes statusPulse {
-  0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
-  50%      { opacity: 0.5; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-}
-
-/* ── Download ────────────────────────────────────────────── */
-.cv-download {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: clamp(28px, 4vh, 44px);
-  padding: 16px 26px;
-  border: 1px solid var(--fg);
-  background: var(--fg);
-  color: #fff;
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background 0.35s var(--ease-out-quint), color 0.35s var(--ease-out-quint);
-}
-.cv-download:hover { background: transparent; color: var(--fg); }
-
-.cv-download .cv-meta {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  opacity: 0.7;
-}
-
-/* Section scaffolding (.section, .section-head, .section-nr, .section-title,
-   .section-rule) and the tag primitives now live in projects.css, which this
-   page also loads — the case study needs them too, and duplicating them here
-   would let the two copies drift apart. */
-
-/* ── Signal trace (career timeline) ──────────────────────── */
-.trace {
-  position: relative;
-  padding-left: clamp(28px, 4vw, 52px);
-}
-
-/* The continuous rail every entry hangs off. */
-.trace::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 1px;
-  background: linear-gradient(
-    to bottom,
-    var(--border-strong),
-    var(--border) 70%,
-    transparent
-  );
-}
-
-.trace-item {
-  position: relative;
-  padding: 0 0 clamp(34px, 5vh, 56px);
-  opacity: 0;
-  transform: translateY(24px);
-  transition:
-    opacity 0.8s var(--ease-out-quint),
-    transform 0.8s var(--ease-out-quint);
-}
-.trace-item.is-in { opacity: 1; transform: translateY(0); }
-.trace-item:last-child { padding-bottom: 0; }
-
-/* Node on the rail. */
-.trace-item::before {
-  content: '';
-  position: absolute;
-  left: calc(clamp(28px, 4vw, 52px) * -1);
-  top: 9px;
-  width: 9px;
-  height: 9px;
-  margin-left: -4px;
-  border-radius: 50%;
-  background: var(--bg);
-  border: 1px solid var(--border-strong);
-  transition: background 0.4s var(--ease-out-quint), border-color 0.4s var(--ease-out-quint);
-}
-
-/* Current role gets a filled node. */
-.trace-item.is-current::before {
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.trace-year {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 17px;
-  letter-spacing: 0.08em;
-  color: rgba(17, 17, 17, 0.55);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-}
-
-.trace-role {
-  margin: 0 0 4px;
-  font-family: var(--font-display);
-  font-size: clamp(22px, 2.6vw, 36px);
-  line-height: 1.1;
-  letter-spacing: 0.015em;
-  color: var(--fg);
-}
-
-.trace-org {
-  display: block;
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(17, 17, 17, 0.55);
-  margin-bottom: 12px;
-}
-
-.trace-desc {
-  margin: 0;
-  max-width: 62ch;
-  font-size: 15px;
-  line-height: 1.7;
-  color: rgba(17, 17, 17, 0.72);
-}
-
-/* ── Capability groups ───────────────────────────────────── */
-.skill-groups {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(30px, 5vw, 72px);
-}
-
-.skill-group h3 {
-  margin: 0 0 24px;
-  font-family: var(--font-ui);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(17, 17, 17, 0.52);
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-/* The source CV states capabilities as lists, not levels, so each group
-   renders with the shared .tag-list / .tag primitives from projects.css
-   rather than as meters against invented numbers. */
-
-/* ── Closing ─────────────────────────────────────────────── */
-.resume-outro {
-  margin-top: clamp(56px, 9vh, 110px);
-  padding: clamp(34px, 5vh, 56px) 0;
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.resume-outro p {
-  margin: 0;
-  max-width: 44ch;
-  font-size: 15px;
-  line-height: 1.7;
-  color: rgba(17, 17, 17, 0.72);
-}
-
-/* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .spec-strip { grid-template-columns: repeat(2, 1fr); }
-  .skill-groups { grid-template-columns: 1fr; gap: 40px; }
-}
-
-@media (max-width: 600px) {
-  .spec-strip { grid-template-columns: 1fr; }
-  .trace { padding-left: 24px; }
-  .trace-item::before { left: -24px; }
-  .cv-download { width: 100%; justify-content: space-between; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .trace-item { opacity: 1 !important; transform: none !important; }
-  .status-live::before { animation: none; }
+/* Print the readable résumé, without navigation, animation or screen decoration. */
+@page { size: A4; margin: 14mm; }
+@media print {
+  html:has(body.resume-page), body.resume-page { height: auto !important; min-height: 0; overflow: visible !important; background: white !important; }
+  body.resume-page { padding: 0; margin: 0; color: #111; font-size: 10pt; }
+  .resume-page *, .resume-page *::before, .resume-page *::after { animation: none !important; transition: none !important; box-shadow: none !important; }
+  .resume-page .bg-layer, .resume-page .cursor, .resume-page .site-nav, .resume-page .nav-overlay,
+  .resume-page .page-tv-overlay, .resume-page .page-tv-frame, .resume-page .page-tv-stroke,
+  .resume-page .page-crt-bevel, .resume-page #pageOverlay, #txInitCover,
+  .resume-page .skip-to-content, .resume-index, .resume-actions, .resume-outro, .resume-page .site-foot { display: none !important; }
+  .resume-page .wrap { max-width: none; width: auto; }
+  .resume-head { display: block; padding: 0 0 14pt; border-bottom: 1px solid #aaa; }
+  .resume-head .page-title { font-size: 35pt; }
+  .resume-page .page-eyebrow { margin-bottom: 9pt; font-size: 8pt; }
+  .resume-role { font-size: 13pt; margin-top: 10pt; }
+  .resume-head .page-sub, .resume-page .trace-desc, .resume-page .case-step-body, .resume-page .case-outcomes li { font-size: 10pt; line-height: 1.5; max-width: none; color: #222; }
+  .resume-contact-links { margin-top: 12pt; }
+  .resume-contact-links a { font-size: 9pt; color: #111; }
+  .resume-profile { border: 0; padding: 14pt 0 0; background: none; }
+  .resume-profile .resume-small-label { display: none; }
+  .spec-strip { grid-template-columns: repeat(4, 1fr); gap: 10pt; }
+  .spec-cell dt { font-size: 8pt; }
+  .spec-cell dd { font-size: 13pt; }
+  .resume-layout { display: block; padding-top: 18pt; }
+  .resume-content > .section { margin-bottom: 22pt; padding: 0; }
+  .resume-page .section-head { margin-bottom: 12pt; break-after: avoid; }
+  .resume-page .section-title { font-size: 21pt; }
+  .resume-page .section-nr { font-size: 10pt; }
+  .trace-item { display: block; padding: 12pt 0; break-inside: avoid; opacity: 1 !important; transform: none !important; }
+  .trace-year { display: block; font-size: 8pt; margin-bottom: 5pt; }
+  .trace-role { font-size: 17pt; }
+  .trace-org { font-size: 8pt; margin-bottom: 6pt; }
+  .skill-groups { grid-template-columns: repeat(2, 1fr); gap: 16pt; }
+  .skill-group { break-inside: avoid; }
+  .skill-group h3 { font-size: 10pt; margin-bottom: 8pt; }
+  .resume-page .tag { font-size: 8pt; padding: 3pt 5pt; }
+  .resume-page .case-outcomes li { break-inside: avoid; padding-top: 8pt; padding-bottom: 8pt; }
+  .resume-page .case-steps { display: block; }
+  .resume-page .case-step { break-inside: avoid; margin-bottom: 12pt; padding-top: 12pt; }
+  .resume-page .case-step-title { font-size: 17pt; }
+  .resume-page .case-step::before { top: 13pt; }
 }

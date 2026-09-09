@@ -7,12 +7,17 @@
 
   <script>
     (function () {
-      var c = sessionStorage.getItem('txColor');
-      if (sessionStorage.getItem('txLabel') === null) return;
-      var d = document.createElement('div');
-      d.id = 'txInitCover';
-      d.style.cssText = 'position:fixed;inset:0;z-index:9890;background:' + (c || '#1a1614') + ';pointer-events:none';
-      document.documentElement.appendChild(d);
+      try {
+        if (sessionStorage.getItem('txLabel') === null) return;
+        document.documentElement.classList.add('skip-boot');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.documentElement.classList.add('tx-pending');
+        var cover = document.createElement('div');
+        cover.id = 'txInitCover';
+        cover.style.cssText = 'position:fixed;inset:0;z-index:9890;pointer-events:none';
+        cover.style.background = sessionStorage.getItem('txColor') || '#1a1614';
+        document.documentElement.appendChild(cover);
+      } catch (e) { /* Navigation remains usable without session storage. */ }
     })();
   </script>
 
@@ -25,13 +30,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
 
-  <link rel="stylesheet" href="assets/css/style.css?v=20260909-fluid5">
-  <link rel="stylesheet" href="assets/css/nav.css">
-  <link rel="stylesheet" href="assets/css/projects.css">
-  <link rel="stylesheet" href="assets/css/resume.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260910-transitions2">
+  <link rel="stylesheet" href="assets/css/nav.css?v=20260910-menu-font1">
+  <link rel="stylesheet" href="assets/css/projects.css?v=20260910-transitions2">
+  <link rel="stylesheet" href="assets/css/resume.css?v=20260910-resume2">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
 </head>
-<body class="page-scroll">
+<body class="page-scroll resume-page">
 
   <a href="#mainContent" class="skip-to-content">Skip to main content</a>
 
@@ -44,9 +49,11 @@
     <div class="wrap">
 
       <!-- ══════════ HEADER ══════════ -->
-      <header class="page-head">
-        <p class="page-eyebrow">Curriculum vitae</p>
-        <h1 class="page-title">RESUME</h1>
+      <header class="page-head resume-head">
+        <div class="resume-intro">
+        <p class="page-eyebrow">Curriculum vitae / UK</p>
+        <h1 class="page-title">AMR BINNIYAZ</h1>
+        <p class="resume-role">QA lead. Front-end developer. Tool builder.</p>
         <p class="page-sub">
           UK-based QA lead and front-end developer. I run quality across a
           platform of 250+ school websites — accessibility, Core Web Vitals,
@@ -54,6 +61,13 @@
           makes it measurable rather than manual.
         </p>
 
+        <div class="resume-contact-links">
+          <a href="mailto:amrbinniyaz@gmail.com">amrbinniyaz@gmail.com <span aria-hidden="true">↗</span></a>
+          <a href="https://github.com/amrbinniyaz" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        </div>
+        </div>
+        <aside class="resume-profile" aria-label="Professional profile">
+        <p class="resume-small-label">At a glance</p>
         <dl class="spec-strip">
           <div class="spec-cell">
             <dt>Based</dt>
@@ -73,14 +87,30 @@
           </div>
         </dl>
 
+        <div class="resume-actions">
         <a class="cv-download" href="assets/files/amr-binniyaz-cv.pdf" download>
           <span>Download CV</span>
-          <span class="cv-meta">PDF · 2pp</span>
+          <span class="cv-meta">PDF ↓</span>
         </a>
+        <button class="resume-print" id="printResume" type="button" hidden>Print this résumé <span aria-hidden="true">↗</span></button>
+        </div>
+        </aside>
       </header>
 
+      <div class="resume-layout">
+      <nav class="resume-index" aria-label="Résumé sections">
+        <p class="resume-small-label">On this page</p>
+        <a href="#highlights" aria-current="location"><span>01</span> Highlights</a>
+        <a href="#experience"><span>02</span> Experience</a>
+        <a href="#capabilities"><span>03</span> Capabilities</a>
+        <a href="#selected-projects"><span>04</span> Selected projects</a>
+        <a href="#education"><span>05</span> Education</a>
+        <a href="#languages"><span>06</span> Languages</a>
+      </nav>
+      <div class="resume-content">
+
       <!-- ══════════ HIGHLIGHTS ══════════ -->
-      <section class="section" aria-labelledby="high-title">
+      <section class="section" id="highlights" aria-labelledby="high-title">
         <div class="section-head">
           <span class="section-nr">01</span>
           <h2 class="section-title" id="high-title">Highlights</h2>
@@ -116,7 +146,7 @@
       </section>
 
       <!-- ══════════ EXPERIENCE ══════════ -->
-      <section class="section" aria-labelledby="exp-title">
+      <section class="section" id="experience" aria-labelledby="exp-title">
         <div class="section-head">
           <span class="section-nr">02</span>
           <h2 class="section-title" id="exp-title">Experience</h2>
@@ -203,7 +233,7 @@
       </section>
 
       <!-- ══════════ CAPABILITIES ══════════ -->
-      <section class="section" aria-labelledby="cap-title">
+      <section class="section" id="capabilities" aria-labelledby="cap-title">
         <div class="section-head">
           <span class="section-nr">03</span>
           <h2 class="section-title" id="cap-title">Capabilities</h2>
@@ -294,7 +324,7 @@
       </section>
 
       <!-- ══════════ SELECTED PROJECTS ══════════ -->
-      <section class="section" aria-labelledby="proj-title">
+      <section class="section" id="selected-projects" aria-labelledby="proj-title">
         <div class="section-head">
           <span class="section-nr">04</span>
           <h2 class="section-title" id="proj-title">Selected projects</h2>
@@ -303,12 +333,12 @@
 
         <ol class="case-steps">
           <li class="case-step">
-            <h3 class="case-step-title">SprXintel</h3>
+            <h3 class="case-step-title"><a href="project.html?slug=content-migration-tool">Content Migration Tool <span aria-hidden="true">↗</span></a></h3>
             <p class="case-step-body">
-              A school data-intelligence platform aggregating 38,000+ schools,
-              built in Python and Next.js. I built the scraping and enrichment
-              engine behind its large-scale content extraction, semantic search
-              and CMS migration workflows.
+              A website content migration tool built in Python and Next.js.
+              I built the scraping and enrichment engine for content extraction,
+              semantic search and CMS migration, connecting the existing page
+              inventory to content review and a new site structure.
             </p>
           </li>
 
@@ -334,7 +364,7 @@
       </section>
 
       <!-- ══════════ EDUCATION ══════════ -->
-      <section class="section" aria-labelledby="edu-title">
+      <section class="section" id="education" aria-labelledby="edu-title">
         <div class="section-head">
           <span class="section-nr">05</span>
           <h2 class="section-title" id="edu-title">Education</h2>
@@ -364,7 +394,7 @@
       </section>
 
       <!-- ══════════ LANGUAGES ══════════ -->
-      <section class="section" aria-labelledby="lang-title">
+      <section class="section" id="languages" aria-labelledby="lang-title">
         <div class="section-head">
           <span class="section-nr">06</span>
           <h2 class="section-title" id="lang-title">Languages</h2>
@@ -384,10 +414,13 @@
           </p>
           <a class="cv-download" href="projects.html">
             <span>View projects</span>
-            <span class="cv-meta">15</span>
+            <span class="cv-meta" aria-hidden="true">↗</span>
           </a>
         </div>
       </section>
+
+      </div>
+      </div>
 
       <footer class="site-foot">
         <span>&copy; <span id="year"></span> Amr Binniyaz</span>
@@ -423,11 +456,11 @@
   <script src="assets/js/config.js?v=20260909-fluid5"></script>
   <script src="assets/js/analytics.js" defer></script>
   <script src="assets/js/reveal.js" defer></script>
-  <script src="assets/js/transition.js" defer></script>
+  <script src="assets/js/transition.js?v=20260910-transitions2" defer></script>
   <script src="assets/js/contours.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/cursor.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/crt-overlay.js" defer></script>
-  <script src="assets/js/nav.js?v=20260909-fluid5" defer></script>
-  <script src="assets/js/resume.js" defer></script>
+  <script src="assets/js/nav.js?v=20260910-transitions2" defer></script>
+  <script src="assets/js/resume.js?v=20260910-resume2" defer></script>
 </body>
 </html>

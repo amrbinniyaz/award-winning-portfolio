@@ -287,7 +287,7 @@
     var figures = container.querySelectorAll('.gallery-figure');
 
     observer = window.Reveal
-      ? window.Reveal.watch(figures, { stagger: 70 })
+      ? window.Reveal.watch(figures, { trigger: 1.5 })
       : (Array.prototype.forEach.call(figures, function (f) { f.classList.add('is-in'); }), null);
   }
 
@@ -326,7 +326,14 @@
     if (!root) return;
 
     var slug = getSlug();
-    var index = projects.findIndex(function (p) { return p.slug === slug; });
+    var index = projects.findIndex(function (p) {
+      return p.slug === slug || (p.aliases || []).indexOf(slug) !== -1;
+    });
+    if (index !== -1 && projects[index].slug !== slug) {
+      var canonical = new URL(window.location.href);
+      canonical.searchParams.set('slug', projects[index].slug);
+      window.history.replaceState(null, '', canonical);
+    }
 
     if (index === -1) renderMissing(slug);
     else render(projects[index], index);

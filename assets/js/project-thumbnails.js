@@ -12,10 +12,16 @@
     "height": 522,
     "scroll": "assets/images/thumbnails/melahah-scroll.webp"
   },
-  "sprxintel": {
-    "src": "assets/images/thumbnails/sprxintel.webp",
+  "integrated-ksa": {
+    "src": "assets/images/thumbnails/integrated-ksa.webp",
     "width": 1024,
-    "height": 561
+    "height": 527,
+    "scroll": "assets/images/thumbnails/integrated-ksa-scroll.webp"
+  },
+  "content-migration-tool": {
+    "src": "assets/images/thumbnails/content-migration-tool.webp",
+    "width": 1024,
+    "height": 563
   },
   "accessibility-audit": {
     "src": "assets/images/thumbnails/accessibility-audit.webp",

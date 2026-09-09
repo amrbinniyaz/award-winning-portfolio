@@ -118,26 +118,27 @@ window.Projects = [
   }
 },
   {
-    "slug": "sprxintel",
-    "title": "SprXintel — School Intelligence",
+    "slug": "content-migration-tool",
+    "aliases": ["sprxintel"],
+    "title": "Content Migration Tool",
     "category": "Product",
     "year": "2026",
-    "cover": "assets/images/work/sprxintel-01-dashboard.webp",
+    "cover": "assets/images/work/content-migration-06-sitemap-builder.webp",
+    "coverAlt": "Content Migration Tool visual sitemap with page hierarchy and a Push to CMS action",
     "gallery": [
-      "assets/images/work/sprxintel-02-crawl-jobs.webp",
-      "assets/images/work/sprxintel-03-schools.webp",
-      "assets/images/work/sprxintel-04-school-detail.webp",
-      "assets/images/work/sprxintel-05-content-editor.webp",
-      "assets/images/work/sprxintel-06-sitemap-builder.webp",
-      "assets/images/work/sprxintel-07-ask-ai.webp"
+      "assets/images/work/content-migration-01-dashboard.webp",
+      "assets/images/work/content-migration-02-crawl-jobs.webp",
+      "assets/images/work/content-migration-03-schools.webp",
+      "assets/images/work/content-migration-04-school-detail.webp",
+      "assets/images/work/content-migration-05-content-editor.webp"
     ],
-    "description": "A content pipeline that crawls a school website, scores and refines what it finds, rebuilds the structure in a visual sitemap, and pushes the result straight into a CMS.",
+    "description": "A website content migration tool that captures existing pages, supports content review and editing, rebuilds the sitemap, and transfers the approved structure into a CMS.",
     "source": "",
     "caseStudy": {
       "role": "Design & Build",
       "timeline": "2026 — in progress",
       "status": "In development",
-      "summary": "Rebuilding a school website normally starts with weeks of content archaeology — clicking through every page, copying it into a spreadsheet, arguing about structure in a sitemap tool, then re-typing all of it into a CMS. SprXintel collapses that into one pipeline.",
+      "summary": "Rebuilding a school website normally starts with weeks of content archaeology — clicking through every page, copying it into a spreadsheet, arguing about structure in a sitemap tool, then re-typing all of it into a CMS. This content migration tool brings crawling, content review, sitemap planning and CMS transfer into one workflow.",
       "problem": "The slow part of a website rebuild is rarely the build. It is the audit that comes first: finding every page that exists, judging which of it is worth keeping, agreeing a new structure, and then moving it across. On a large site that is thousands of pages of manual work — and it starts from zero again on the next project.",
       "approach": [
         {

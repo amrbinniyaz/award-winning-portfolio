@@ -360,7 +360,7 @@
     // keeps the content itself held back.
     var booted = false;
     try { booted = !!sessionStorage.getItem('hasBooted'); } catch (e) {}
-    if (booted) {
+    if (booted || document.documentElement.classList.contains('skip-boot')) {
       skipBoot();
       return;
     }

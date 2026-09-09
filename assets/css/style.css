@@ -515,29 +515,58 @@ body.boot-pending.cursor-hover .cursor-ring {
   inset: 0;
   z-index: var(--z-overlay);
   pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  visibility: hidden;
+  overflow: hidden;
 }
-
+#pageOverlay.tx-active { visibility: visible; pointer-events: all; }
+#pageOverlay.tx-arriving { background: var(--tx-color, var(--bg-boot)); }
+#pageOverlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.03) 3px 4px);
+}
+.is-transitioning .page-tv-frame, .tx-pending .page-tv-frame { z-index: 9895; }
+.is-transitioning .page-tv-stroke, .tx-pending .page-tv-stroke { z-index: 9894; }
+.is-transitioning .page-crt-bevel, .tx-pending .page-crt-bevel { z-index: 9893; }
 #pageOverlay .tx-panel {
   position: absolute;
   top: 0;
   height: 100%;
   background: var(--tx-color, var(--bg-boot));
-  transform: scaleY(0);
-  transform-origin: bottom center;
+  transform: translateY(105%);
+  will-change: transform;
 }
-
-.overlay-label {
-  position: relative;
+.tx-panel--left { left: 0; width: 27.1%; }
+.tx-panel--centre { left: 27%; width: 46%; }
+.tx-panel--right { left: 72.9%; width: 27.1%; }
+.tx-words {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: .3em 0;
   z-index: 2;
-  font-family: var(--font-display);
-  font-size: clamp(40px, 7vw, 110px);
-  letter-spacing: 0.04em;
-  color: #fff;
-  opacity: 0;
+  color: rgba(255,255,255,.92);
+  clip-path: inset(0 0 100% 0);
+}
+.tx-words span {
+  flex: none;
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-weight: 900;
+  font-size: clamp(56px, 11vw, 208px);
+  line-height: .95;
+  letter-spacing: -.01em;
+  white-space: nowrap;
   text-transform: uppercase;
+}
+.overlay-label { display: none; }
+.is-transitioning .page-scanner-lines { visibility: hidden; }
+@media (max-width: 768px) {
+  .tx-words span { font-size: clamp(80px, 32vw, 144px); }
 }
 
 /* ═══════════ CRT BOOT PRELOADER ═══════════ */

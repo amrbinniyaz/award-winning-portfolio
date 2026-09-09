@@ -67,7 +67,7 @@ pointer smoothing → cached contours → slide/parallax
 | `nameplate.js` | Per-letter reels. Each lands on an exact multiple of glyph-height, then collapses back to a single glyph — without that reset the DOM grows every swap and letters drift off-baseline. |
 | `preloader.js` | SMPTE bars, chaos blocks, two glitch bursts, grain, segmented progress, BIOS handoff, then a tube-warmup flicker reveal. |
 | `crt-overlay.js` | Barrel viewport via `clip-path: path()`. The frame uses an evenodd path (rect *minus* barrel) so it paints only the corners. |
-| `transition.js` | Three-panel wipe. Label and tint cross the navigation boundary through `sessionStorage`, since the outgoing page's JS dies on unload. |
+| `transition.js` | Centre-led panels, repeated display type that fills and clears, then a single downward reveal. Colour crosses navigation through `sessionStorage`. |
 
 ### Performance notes
 
@@ -174,7 +174,9 @@ automatically.
 ### Portfolio previews
 
 The grid uses uncropped, aspect-preserving WebP thumbnails in aligned 16:9
-frames. Regenerate them after adding or changing cover images:
+frames. Optimized thumbnails load ahead of scrolling (with native lazy loading
+for data-saving connections), and cards have no delayed entrance. Regenerate
+them after adding or changing cover images:
 
 ```bash
 python3 tools/generate-thumbnails.py
@@ -182,13 +184,14 @@ python3 tools/generate-thumbnails.py
 
 This maintenance script needs Pillow and Node; the website still has no runtime
 dependencies. Originals remain available for the full case-study galleries.
-Load `project-thumbnails.js` after the project data and `melahah-project.js`.
+Load `project-thumbnails.js` after the project data, `melahah-project.js` and
+`integrated-project.js`.
 
 Vegan Valley includes a muted 218 KB looping preview and an on-demand full
 walkthrough. Previews pause outside the viewport, in hidden tabs, or when
 explicitly paused; reduced-motion and data-saving preferences prevent automatic
 playback. Its localhost link appears only when this portfolio is viewed locally.
-Melahah uses a full-page screenshot that scrolls on hover or keyboard focus,
+Melahah and Integrated KSA use full-page screenshots that scroll on hover or keyboard focus,
 with a static view for reduced motion. Gallery entries accept either a path or
 an object with `src`, `alt` and `caption`.
 
@@ -197,16 +200,17 @@ an object with `src`, `alt` and `caption`.
 Content is authored **directly in `resume.html`** as semantic HTML, not rendered
 from a data file the way projects are. A CV should be crawlable and readable
 without JavaScript, and it has no filtering or routing to justify client-side
-rendering. `resume.js` only animates.
+rendering. `resume.js` adds active section navigation and a print button.
 
-The design reads the CV as a machine spec sheet: career history as a signal
-trace with nodes on a rail, and capability levels as segmented meters using the
-same dash rhythm as the boot screen's loading bar, so the page reads as part of
-the same machine.
+The header presents the name, role, contact links and CV download together.
+A sticky section index accompanies the career timeline on desktop; smaller
+screens use a wrapping index and a single-column career layout. All experience
+entries remain visible without JavaScript. Capabilities are grouped tags,
+without invented proficiency percentages.
 
-Skill percentages are the real values from the old site. Infrastructure
-(Google Cloud, AWS, Digital Ocean) had no levels there, so it renders as tags
-rather than invented numbers.
+“Print this résumé” prints the current HTML with A4 styling and removes the
+CRT effects, navigation and buttons. The existing PDF download remains a
+separate file at `assets/files/amr-binniyaz-cv.pdf`.
 
 ### Content
 
@@ -243,9 +247,9 @@ parallax, fluid, grid filtering, deep links, detail rendering, prev/next
 boundaries, unknown-slug handling, cross-page transitions, mobile at 375px,
 reduced motion. Console clean on every page.
 
-### SprXintel screenshots — check before publishing
+### Content Migration Tool screenshots — check before publishing
 
-The seven interior screenshots show **real crawled client data**: named schools
+The migration screenshots show **real crawled client data**: named schools
 (Emanuel, Friends Seminary, Madeira, St David's College, Head Royce and
 others), HubSpot record IDs, and an internal staging CMS hostname.
 

@@ -10,7 +10,7 @@ from PIL import Image, ImageOps
 ROOT = Path(__file__).resolve().parents[1]
 source = """
 const fs=require('fs'),vm=require('vm');const ctx={window:{}};vm.createContext(ctx);
-for(const name of ['projects-data.js','melahah-project.js'])vm.runInContext(fs.readFileSync('assets/js/'+name,'utf8'),ctx);
+for(const name of ['projects-data.js','melahah-project.js','integrated-project.js'])vm.runInContext(fs.readFileSync('assets/js/'+name,'utf8'),ctx);
 process.stdout.write(JSON.stringify(ctx.window.Projects));
 """
 projects = json.loads(subprocess.check_output(['node', '-e', source], cwd=ROOT, text=True))

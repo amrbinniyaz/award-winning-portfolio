@@ -4,7 +4,7 @@
  * The resume content is authored directly in resume.html rather than rendered
  * from a data file (as projects.js does). A CV should be readable and
  * crawlable without JavaScript, and it has no filtering or routing to justify
- * client-side rendering. JS here only animates.
+ * client-side rendering. JS adds section tracking, navigation and printing.
  */
 (function () {
   'use strict';
@@ -13,12 +13,13 @@
     document.addEventListener('click', function (e) {
       var link = e.target.closest('a[href]');
       if (!link) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
 
       var href = link.getAttribute('href');
       if (!href || href.charAt(0) === '#') return;
       if (link.hasAttribute('download')) return;          // let the CV download
       if (link.target === '_blank') return;
+      if (!/^https?:$/.test(new URL(link.href).protocol)) return;
 
       e.preventDefault();
       var label = href === '/' ? 'HOME'
@@ -34,12 +35,31 @@
     var y = document.getElementById('year');
     if (y) y.textContent = new Date().getFullYear();
 
-    // Career and education entries share the site-wide reveal behaviour.
-    document.querySelectorAll('[data-reveal]').forEach(function (group) {
-      var items = group.querySelectorAll('.trace-item');
-      if (window.Reveal) window.Reveal.watch(items, { stagger: 80 });
-      else Array.prototype.forEach.call(items, function (i) { i.classList.add('is-in'); });
-    });
+    var printButton = document.getElementById('printResume');
+    if (printButton) {
+      printButton.hidden = false;
+      printButton.addEventListener('click', function () { window.print(); });
+    }
+
+    // The document stays fully readable without animation or JavaScript.
+    var sections = Array.from(document.querySelectorAll('.resume-content > section'));
+    var links = Array.from(document.querySelectorAll('.resume-index a'));
+    var scheduled = false;
+    function updateIndex() {
+      scheduled = false;
+      var current = sections[0];
+      sections.forEach(function (section) {
+        if (section.getBoundingClientRect().top <= 180) current = section;
+      });
+      links.forEach(function (link) {
+        if (current && link.hash === '#' + current.id) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+    window.addEventListener('scroll', function () {
+      if (!scheduled) { scheduled = true; requestAnimationFrame(updateIndex); }
+    }, { passive: true });
+    updateIndex();
 
     wireNavigation();
 

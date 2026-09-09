@@ -1,12 +1,9 @@
 /**
  * PORTFOLIO — listing grid
  *
- * Renders the grid from window.Projects, wires category filtering, reveals
- * cards on scroll, and hands navigation to the transition system.
+ * Renders the grid from window.Projects, wires category filtering, shows
+ * ready-to-scroll thumbnails, and hands navigation to the transition system.
  *
- * The scroll reveal uses IntersectionObserver and unobserves each card once
- * shown — a card that has appeared never needs watching again, and leaving
- * observers attached to a 12-item grid costs main-thread work on every scroll.
  */
 (function () {
   'use strict';
@@ -16,7 +13,7 @@
   var grid, filterBar;
   var projects = window.Projects || [];
   var active = ALL;
-  var observer = null;
+  var saveData = navigator.connection && navigator.connection.saveData;
 
   /* ── Rendering ───────────────────────────────────────────── */
 
@@ -55,7 +52,7 @@
       link.className = 'work-card-link';
       var bar = document.createElement('div');
       bar.className = 'work-preview-bar';
-      card.className = 'work-card';
+      card.className = 'work-card is-in';
       link.href = 'project.html?slug=' + encodeURIComponent(p.slug);
       card.dataset.category = p.category;
       card.dataset.slug = p.slug;
@@ -70,8 +67,9 @@
         img.height = p.thumbnail.height;
       }
       img.alt = p.coverAlt || p.title;
-      // The first row is above the fold; everything else can wait.
-      img.loading = i < 2 ? 'eager' : 'lazy';
+      // The small optimized gallery loads ahead of scrolling. Respect data saving.
+      img.loading = saveData && i >= 2 ? 'lazy' : 'eager';
+      img.fetchPriority = i < 2 ? 'high' : 'low';
       img.decoding = 'async';
 
       var index = document.createElement('span');
@@ -129,23 +127,7 @@
       grid.appendChild(card);
     });
 
-    observeCards();
     if (window.ProjectMedia) window.ProjectMedia.init(grid);
-  }
-
-  /* ── Scroll reveal ───────────────────────────────────────── */
-
-  function observeCards() {
-    if (observer) observer.cancel();
-
-    var visible = Array.prototype.filter.call(
-      grid.querySelectorAll('.work-card'),
-      function (c) { return !c.classList.contains('is-hidden'); }
-    );
-
-    observer = window.Reveal
-      ? window.Reveal.watch(visible, { stagger: 90 })
-      : (visible.forEach(function (c) { c.classList.add('is-in'); }), null);
   }
 
   /* ── Filtering ───────────────────────────────────────────── */
@@ -165,8 +147,7 @@
       card.classList.toggle('is-hidden', !match);
       if (match) {
         shown++;
-        // Reset so re-shown cards animate in again rather than popping.
-        card.classList.remove('is-in');
+        card.classList.add('is-in');
       }
     });
 
@@ -179,7 +160,6 @@
       grid.appendChild(msg);
     }
 
-    observeCards();
     if (window.ProjectMedia) window.ProjectMedia.refresh();
   }
 
