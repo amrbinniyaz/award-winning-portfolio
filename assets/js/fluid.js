@@ -49,6 +49,7 @@
   var portraitBase = null, portraitArt = null;
   var portraitRect = [0, 0, 0, 0];
   var backgroundAspect = 1;
+  var backgroundBrightness = 1;
   var listenersBound = false;
   var ready = false;
 
@@ -206,7 +207,7 @@
     'uniform vec3 uTint;',
     'uniform vec2 uEdge, uDyeTexel, uBackgroundScale;',
     'uniform vec4 uPortraitRect;',
-    'uniform float uHasBg, uHasPortrait;',
+    'uniform float uHasBg, uHasPortrait, uBackgroundBrightness;',
     'void main() {',
     '  float density = texture2D(uTexture, vUv).r;',
     // Estimate coverage at the boundary to avoid a crawling one-texel edge.
@@ -217,16 +218,18 @@
     '  float mask = smoothstep(threshold - edge, threshold + edge, density);',
     '  vec2 bgUv = (vec2(vUv.x, 1.0 - vUv.y) - 0.5) * uBackgroundScale + 0.5;',
     '  vec3 color = uHasBg > 0.5 ? texture2D(uBackground, bgUv).rgb : uTint;',
+    '  color = min(color * uBackgroundBrightness, vec3(1.0));',
     '  vec4 result = vec4(color * mask, mask);',
     '  if (uHasPortrait > 0.5) {',
     '    vec2 uv = (vec2(vUv.x, 1.0 - vUv.y) - uPortraitRect.xy) / uPortraitRect.zw;',
     '    if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0) {',
     '      vec4 photo = texture2D(uPortrait, uv);',
     '      vec4 art = texture2D(uArt, uv);',
-    // Quiet graphite outside the ink, original coloured portrait inside it.
+    // A warm, gently muted portrait with full colour inside the fluid.
     '      float graphite = dot(photo.rgb, vec3(0.299, 0.587, 0.114));',
-    '      photo.rgb = mix(vec3(graphite) * vec3(1.04, 1.015, 0.99), photo.rgb, 0.24);',
+    '      photo.rgb = mix(vec3(graphite) * vec3(1.04, 1.015, 0.99), photo.rgb, 0.78);',
     '      vec4 portrait = mix(photo, art, mask);',
+    '      portrait.rgb *= 0.86;',
     '      portrait.a *= 1.0 - smoothstep(0.88, 1.0, uv.y);',
     '      result = vec4(portrait.rgb * portrait.a + result.rgb * (1.0 - portrait.a), portrait.a + result.a * (1.0 - portrait.a));',
     '    }',
@@ -531,6 +534,7 @@
     gl.disable(gl.BLEND);
 
     programs.display.bind();
+    gl.uniform1f(programs.display.uniforms.uBackgroundBrightness, backgroundBrightness);
     gl.uniform1i(programs.display.uniforms.uTexture, dye.read.attach(0));
     gl.uniform3f(
       programs.display.uniforms.uTint,
@@ -668,6 +672,8 @@
   function init() {
     canvas = document.getElementById('fluidCanvas');
     if (!canvas) return false;
+    // Page-specific reveal strength; portrait and resting room stay unchanged.
+    backgroundBrightness = Math.max(1, Math.min(2, Number(canvas.dataset.backgroundBrightness) || 1));
 
     var got = getContext(canvas);
     if (!got) {

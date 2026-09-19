@@ -189,6 +189,87 @@
 
   /* ── Init ────────────────────────────────────────────────── */
 
+  function initMotion() {
+    var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var fine = window.matchMedia('(pointer: fine)');
+    var enabled = false, pointerActive = false;
+    var x = .5, y = .5, smoothX = .5, smoothY = .5;
+    var last = 0, frameId = null, grainDraws = 0;
+    var easing = (window.SiteConfig || {}).easing || {};
+
+    function resetPointer() { pointerActive = false; }
+
+    function frame(ts) {
+      frameId = null;
+      if (document.hidden) return;
+      var dt = Math.min(Math.max((ts - last) / 1000, .001), .05);
+      last = ts;
+      if (enabled && window.Fluid && window.Fluid.ready) {
+        if (pointerActive) {
+          var previousX = smoothX, previousY = smoothY;
+          var ease = 1 - Math.pow(1 - (easing.mouse || .16), dt * 60);
+          smoothX += (x - smoothX) * ease;
+          smoothY += (y - smoothY) * ease;
+          var dx = smoothX - previousX, dy = smoothY - previousY;
+          var distance = Math.hypot(dx * innerWidth, dy * innerHeight);
+          if (distance > .3) {
+            var samples = Math.min(5, Math.max(1, Math.ceil(distance / 24)));
+            for (var i = 1; i <= samples; i++) {
+              window.Fluid.splat(
+                (previousX + dx * i / samples) * innerWidth,
+                (previousY + dy * i / samples) * innerHeight,
+                dx / samples, dy / samples
+              );
+            }
+          }
+        }
+        window.Fluid.tick(dt);
+      }
+      if (window.Cursor) window.Cursor.update(motion.matches ? 1 : 1 - Math.pow(1 - (easing.ring || .16), dt * 60));
+      // A static grain plate leaves GPU time for the fluid and video previews.
+      if (window.CRTOverlay && grainDraws < 5) {
+        window.CRTOverlay.drawGrain();
+        grainDraws++;
+      }
+      if (!motion.matches && fine.matches) frameId = requestAnimationFrame(frame);
+    }
+
+    function resume() {
+      if (frameId !== null) cancelAnimationFrame(frameId);
+      frameId = null;
+      resetPointer();
+      if (document.hidden) return;
+      last = performance.now();
+      frameId = requestAnimationFrame(frame);
+    }
+
+    function updateMotion() {
+      enabled = !motion.matches && fine.matches;
+      if (enabled && window.Fluid && !window.Fluid.ready && window.Fluid.init()) {
+        window.Fluid.setBackground('assets/images/cinematic-interior.webp');
+      }
+      resume();
+    }
+
+    document.addEventListener('pointermove', function (e) {
+      if (!enabled || e.pointerType === 'touch') return;
+      x = e.clientX / innerWidth;
+      y = e.clientY / innerHeight;
+      // Re-entry starts here instead of drawing a streak from the last visit.
+      if (!pointerActive) {
+        smoothX = x; smoothY = y;
+        pointerActive = true;
+      }
+    }, { passive: true });
+    document.addEventListener('pointerleave', resetPointer);
+    window.addEventListener('blur', resetPointer);
+    window.addEventListener('resize', function () { grainDraws = 0; resume(); });
+    document.addEventListener('visibilitychange', resume);
+    motion.addEventListener('change', updateMotion);
+    fine.addEventListener('change', updateMotion);
+    updateMotion();
+  }
+
   function init() {
     grid = document.getElementById('workGrid');
     filterBar = document.getElementById('filters');
@@ -222,22 +303,12 @@
       if (btn) applyFilter(btn.dataset.category);
     });
 
-    if (window.Contours) window.Contours.init();
     if (window.Cursor) window.Cursor.init();
     if (window.CRTOverlay) window.CRTOverlay.init();
     if (window.Nav) window.Nav.init();
     if (window.Transition) window.Transition.enter();
 
-    // Inner pages share the landing page's render loop shape, minus the fluid.
-    var last = 0;
-    requestAnimationFrame(function loop(ts) {
-      var dt = Math.min((ts - last) / 1000, 0.05);
-      last = ts;
-      if (window.Contours) window.Contours.draw(dt);
-      if (window.Cursor) window.Cursor.update(0.12);
-      if (window.CRTOverlay) window.CRTOverlay.drawGrain();
-      requestAnimationFrame(loop);
-    });
+    initMotion();
   }
 
   if (document.readyState === 'loading') {

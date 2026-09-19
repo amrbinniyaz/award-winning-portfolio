@@ -110,7 +110,6 @@
     previousX = smoothX;
     previousY = smoothY;
 
-    if (window.Contours) window.Contours.draw(reduced ? 0 : dt);
 
     // Content group slides away from the cursor's side.
     if (slideReady && slideGroup) {
@@ -239,9 +238,8 @@
     portraitSection = document.getElementById('portraitSection');
     nameSection = document.getElementById('nameSection');
 
-    if (window.Contours) window.Contours.init();
     if (window.Fluid && !reduced) {
-      if (window.Fluid.init()) window.Fluid.setBackground('assets/images/fluid-landscape.svg');
+      if (window.Fluid.init()) window.Fluid.setBackground('assets/images/cinematic-interior.webp');
     }
     if (window.LiquidMask) window.LiquidMask.init();
     if (window.Nameplate) window.Nameplate.init();
@@ -309,10 +307,9 @@
         document.body.classList.remove('gpu-portrait', 'cursor-left', 'cursor-right');
         if (frameId !== null) cancelAnimationFrame(frameId);
         frameId = null;
-        if (window.Contours) { window.Contours.resize(); window.Contours.draw(0); }
       } else {
         if (window.Fluid && !window.Fluid.ready && window.Fluid.init()) {
-          window.Fluid.setBackground('assets/images/fluid-landscape.svg');
+          window.Fluid.setBackground('assets/images/cinematic-interior.webp');
         }
         if (window.LiquidMask) window.LiquidMask.init();
         slideReady = parallaxReady = HAS_FINE_POINTER;

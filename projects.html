@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>html{background:#FBFBFB}</style>
+  <style>html{background:#0b0c0d}</style>
 
   <!-- Paints a cover matching the outgoing transition tint before CSS loads,
        so an inbound transition never flashes white. -->
@@ -32,20 +32,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
 
-  <link rel="stylesheet" href="assets/css/style.css?v=20260910-transitions2">
+  <link rel="preload" href="assets/images/cinematic-interior.webp" as="image">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260919-cinematic1">
   <link rel="stylesheet" href="assets/css/nav.css?v=20260910-menu-font1">
-  <link rel="stylesheet" href="assets/css/projects.css?v=20260910-transitions2">
+  <link rel="stylesheet" href="assets/css/projects.css?v=20260919-gallery2">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
 </head>
-<body class="page-scroll">
+<body class="page-scroll projects-gallery">
 
   <a href="#mainContent" class="skip-to-content">Skip to main content</a>
 
-  <!-- Contours only on inner pages — the fluid sim is a lovely centrepiece on
-       the landing page but it fights a dense image grid for attention. -->
+  <!-- A quieter view of the homepage room frames the selected work. -->
   <div class="bg-layer" aria-hidden="true">
-    <canvas class="bg-canvas" id="bgCanvas"></canvas>
-    <div class="bg-noise"></div>
+    <canvas class="fluid-canvas" id="fluidCanvas"></canvas>
   </div>
 
   <main id="mainContent">
@@ -103,11 +102,11 @@
   <script src="assets/js/analytics.js" defer></script>
   <script src="assets/js/reveal.js" defer></script>
   <script src="assets/js/transition.js?v=20260910-transitions2" defer></script>
-  <script src="assets/js/contours.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/fluid.js?v=20260919-cinematic2" defer></script>
   <script src="assets/js/cursor.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/crt-overlay.js" defer></script>
   <script src="assets/js/nav.js?v=20260910-transitions2" defer></script>
   <script src="assets/js/project-media.js?v=20260910-transitions2" defer></script>
-  <script src="assets/js/projects.js?v=20260910-transitions2" defer></script>
+  <script src="assets/js/projects.js?v=20260919-gallery2" defer></script>
 </body>
 </html>

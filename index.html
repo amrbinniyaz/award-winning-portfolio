@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>html{background:#1a1614}</style>
+  <style>html{background:#080909}</style>
 
   <!-- Boot sequence runs once per browsing session. This has to be inline in
        <head>, before first paint: deciding in preloader.js is too late and the
@@ -15,7 +15,7 @@
       try {
         if (sessionStorage.getItem('hasBooted')) {
           document.documentElement.classList.add('skip-boot');
-          document.documentElement.style.background = '#FBFBFB';
+          document.documentElement.style.background = '#080909';
         }
       } catch (e) { /* private mode — just play the boot */ }
     })();
@@ -49,8 +49,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
 
-  <link rel="stylesheet" href="assets/css/style.css?v=20260910-transitions2">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260919-cinematic1">
   <link rel="stylesheet" href="assets/css/nav.css?v=20260910-menu-font1">
+  <link rel="preload" as="image" href="assets/images/cinematic-interior.webp">
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
 </head>
 <body class="boot-pending portfolio-home">
@@ -108,9 +109,7 @@
 
   <!-- ══════════ BACKGROUND LAYERS ══════════ -->
   <div class="bg-layer" aria-hidden="true">
-    <canvas class="bg-canvas" id="bgCanvas"></canvas>
-    <canvas class="fluid-canvas" id="fluidCanvas"></canvas>
-    <div class="bg-noise"></div>
+    <canvas class="fluid-canvas" id="fluidCanvas" data-background-brightness="1.35"></canvas>
   </div>
 
   <!-- ══════════ SIDE NAVIGATION ══════════ -->
@@ -134,11 +133,11 @@
       <div class="portrait-section" id="portraitSection">
         <div class="portrait-frame" id="portraitFrame">
           <img class="portrait-base" id="portraitBase"
-               src="assets/images/portrait.webp" alt=""
-               width="1024" height="1024" draggable="false" fetchpriority="high">
+               src="assets/images/portrait-fashion-editorial.webp" alt=""
+               width="1254" height="1254" draggable="false" fetchpriority="high">
           <img class="portrait-illustration" id="portraitIllustration"
-               src="assets/images/portrait.webp" alt=""
-               width="1024" height="1024" draggable="false">
+               src="assets/images/portrait-fashion-editorial.webp" alt=""
+               width="1254" height="1254" draggable="false">
         </div>
       </div>
 
@@ -178,14 +177,13 @@
   <script src="assets/js/config.js?v=20260909-fluid5"></script>
   <script src="assets/js/analytics.js" defer></script>
   <script src="assets/js/transition.js?v=20260910-transitions2" defer></script>
-  <script src="assets/js/fluid.js?v=20260909-fluid5" defer></script>
-  <script src="assets/js/contours.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/fluid.js?v=20260919-cinematic2" defer></script>
   <script src="assets/js/liquid-mask.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/nameplate.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/cursor.js?v=20260909-fluid5" defer></script>
   <script src="assets/js/crt-overlay.js" defer></script>
   <script src="assets/js/preloader.js?v=20260910-transitions2" defer></script>
   <script src="assets/js/nav.js?v=20260910-transitions2" defer></script>
-  <script src="assets/js/main.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/main.js?v=20260919-cinematic1" defer></script>
 </body>
 </html>

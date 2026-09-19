@@ -3,7 +3,8 @@
 <title>Portfolio motion checks</title>
 <style>body{font:15px system-ui;margin:24px;background:#eeeae2;color:#292827}button,select{font:inherit;padding:8px}iframe{display:block;border:0;margin-top:16px;width:100%;height:720px}pre{white-space:pre-wrap}</style>
 <h1>Portfolio motion checks</h1>
-<p>Runs the actual landing page with a scripted pointer sweep. Reduced-motion and unavailable-WebGL cases use local test overrides; system preferences are untouched.</p>
+<p>Runs the selected page with a scripted pointer sweep. Reduced-motion and unavailable-WebGL cases use local test overrides; system preferences are untouched.</p>
+<select id="page" aria-label="Page to test"><option value="index.html">Homepage</option><option value="projects.html">Projects gallery</option></select>
 <select id="mode"><option value="normal">Desktop motion</option><option value="mobile">Mobile touch · 390 × 844</option><option value="reduced">Reduced motion</option><option value="nogl">WebGL unavailable</option></select>
 <button id="run">Run checks</button><pre id="result">Ready.</pre><iframe id="preview" title="Portfolio test"></iframe>
 <script>
@@ -11,10 +12,12 @@ const output = document.getElementById('result');
 const frame = document.getElementById('preview');
 document.getElementById('run').onclick = async () => {
   const mode = document.getElementById('mode').value;
+  const page = document.getElementById('page').value;
+  const gallery = page === 'projects.html';
   output.textContent = 'Running…';
   frame.style.width = mode === 'mobile' ? '390px' : '100%';
   frame.style.height = mode === 'mobile' ? '844px' : '720px';
-  const html = await (await fetch('../index.html', {cache:'no-store'})).text();
+  const html = await (await fetch('../'+page, {cache:'no-store'})).text();
   const shim = `
     window.__qa = {readbacks:0,errors:[],frames:[],splats:0,cpu:[],contours:[],renderer:null,rafCpu:[]};
     const mode = ${JSON.stringify(mode)};
@@ -54,8 +57,10 @@ document.getElementById('run').onclick = async () => {
     w.Fluid.splat = (...args) => {qa.splats++; return splat(...args);};
     const tick = w.Fluid.tick;
     w.Fluid.tick = (...args) => {const start=performance.now();const result=tick(...args);qa.cpu.push(performance.now()-start);return result;};
-    const draw=w.Contours.draw;
-    w.Contours.draw=(...args)=>{const start=performance.now();draw(...args);qa.contours.push(performance.now()-start);};
+    if (w.Contours) {
+      const draw=w.Contours.draw;
+      w.Contours.draw=(...args)=>{const start=performance.now();draw(...args);qa.contours.push(performance.now()-start);};
+    }
     let start, last;
     function sample(ts) {
       if (!start) start = ts;
@@ -67,17 +72,25 @@ document.getElementById('run').onclick = async () => {
       }
       if (t < 5) {requestAnimationFrame(sample); return;}
       const values=qa.frames.sort((a,b)=>a-b);
-      const rect=w.document.getElementById('portraitFrame').getBoundingClientRect();
+      const rect=w.document.getElementById(gallery ? 'fluidCanvas' : 'portraitFrame').getBoundingClientRect();
       const reduced=mode==='reduced', fallback=mode==='nogl';
+      const staticMode=reduced||fallback||(gallery&&mode==='mobile');
       const checks={
         'No runtime errors':qa.errors.length===0,
         'No GPU readbacks':qa.readbacks===0,
-        'Expected renderer': reduced||fallback ? !w.Fluid.ready : w.Fluid.ready && w.document.body.classList.contains('gpu-portrait'),
-        'Pointer produces fluid only with motion + WebGL':reduced||fallback ? qa.splats===0 : qa.splats>0,
-        'Portrait intersects viewport':rect.bottom>0&&rect.top<w.innerHeight&&rect.right>0&&rect.left<w.innerWidth,
-        'Touch does not slide the composition':mode!=='mobile'||!w.document.getElementById('slideGroup').style.transform,
-        'No horizontal overflow':w.document.documentElement.scrollWidth===w.innerWidth
+        'Expected renderer': staticMode ? !w.Fluid.ready : w.Fluid.ready && (gallery || w.document.body.classList.contains('gpu-portrait')),
+        'Pointer produces fluid only with motion + WebGL':staticMode ? qa.splats===0 : qa.splats>0,
+        'Composition is visible':gallery ? w.document.querySelectorAll('.work-card:not(.is-hidden)').length>0 : rect.bottom>0&&rect.top<w.innerHeight&&rect.right>0&&rect.left<w.innerWidth,
+        'Touch does not slide the composition':gallery||mode!=='mobile'||!w.document.getElementById('slideGroup').style.transform,
+        'No horizontal overflow':w.document.documentElement.scrollWidth<=w.innerWidth
       };
+      if (gallery) {
+        const button=w.document.querySelector('[data-category="Web Design"]');
+        button.click();
+        const visible=[...w.document.querySelectorAll('.work-card:not(.is-hidden)')];
+        checks['Category filter works with fluid']=visible.length===3&&visible.every(card=>card.dataset.category==='Web Design');
+        checks['Fluid stays behind content']=w.getComputedStyle(w.document.querySelector('.bg-layer')).pointerEvents==='none';
+      }
       output.textContent=JSON.stringify({mode,checks,medianFrameMs:+values[Math.floor(values.length/2)].toFixed(2),p95FrameMs:+values[Math.floor(values.length*.95)].toFixed(2),readbacks:qa.readbacks,splats:qa.splats,errors:qa.errors,renderer:qa.renderer,fluidCpuMs:qa.cpu.reduce((a,b)=>a+b,0)/(qa.cpu.length||1),contourCpuMs:qa.contours.reduce((a,b)=>a+b,0)/(qa.contours.length||1),rafCpuMs:qa.rafCpu.reduce((a,b)=>a+b,0)/(qa.rafCpu.length||1)},null,2);
     }
     requestAnimationFrame(sample);

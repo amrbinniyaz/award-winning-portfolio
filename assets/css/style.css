@@ -881,11 +881,19 @@ html.is-entering .site-nav       { animation: enterDown  0.75s cubic-bezier(0.22
   body.boot-pending .name-section     { transform: none !important; }
 }
 
-/* Landing art direction: a close portrait, ink on warm paper, colour carried
-   by the fluid. Keep other portfolio pages on their existing design tokens. */
-.portfolio-home { --bg: #f2efe8; --fg: #292827; }
+/* Landing art direction: a painted, cinematic interior with warm ivory type. */
+.portfolio-home {
+  --bg: #0b0c0d;
+  --bg-boot: #080909;
+  --fg: #f3e8d5;
+  --fg-dimmer: rgba(243,232,213,.28);
+  --border-strong: rgba(243,232,213,.45);
+}
 .portfolio-home .bg-layer {
-  background: radial-gradient(ellipse at 50% 40%, #faf7f0, #e9e5dd);
+  background:
+    linear-gradient(to bottom, rgba(3,5,7,.1), rgba(3,5,7,.3)),
+    url('../images/cinematic-interior.webp') center / cover no-repeat,
+    #0b0c0d;
 }
 .portfolio-home .portrait-section {
   width: min(110vh, 108vw, 1040px);
@@ -895,13 +903,24 @@ html.is-entering .site-nav       { animation: enterDown  0.75s cubic-bezier(0.22
   -webkit-mask-image: linear-gradient(#000 88%, transparent);
   mask-image: linear-gradient(#000 88%, transparent);
 }
-.portfolio-home .portrait-base { filter: grayscale(.76) sepia(.08); }
+.portfolio-home .portrait-base { filter: grayscale(.22) sepia(.035) brightness(.86); }
 .portfolio-home .name-section { bottom: 2.6vh; z-index: 3; }
-.portfolio-home .page-grain-canvas { opacity: .026; }
-.portfolio-home .page-scanlines { opacity: .48; }
-.portfolio-home .bg-noise { opacity: .026; }
+.portfolio-home .page-grain-canvas { opacity: .018; }
+.portfolio-home .page-scanlines { opacity: .15; }
+.portfolio-home .page-scanner-lines { display: none; }
 .portfolio-home .side { gap: 16px; }
 .portfolio-home .side-nr { font-size: clamp(70px, 11vh, 125px); }
+.portfolio-home.cursor-left .side--left .side-nr,
+.portfolio-home.cursor-right .side--right .side-nr {
+  color: #e5d3b0;
+  text-shadow: 0 0 30px rgba(223,188,137,.24);
+  animation: none;
+}
+.portfolio-home.cursor-left .side--left .side-text,
+.portfolio-home.cursor-left .side--left .side-arrow,
+.portfolio-home.cursor-right .side--right .side-text,
+.portfolio-home.cursor-right .side--right .side-arrow { color: #f3e8d5; }
+.portfolio-home .name-display { text-shadow: 0 3px 30px rgba(0,0,0,.35); }
 .portfolio-home .side--left { left: 4.7vw; }
 .portfolio-home .side--right { right: 4.7vw; }
 .portfolio-home .side-text { font-size: 12px; letter-spacing: .23em; }
@@ -919,15 +938,4 @@ html.is-entering .site-nav       { animation: enterDown  0.75s cubic-bezier(0.22
 @media (prefers-reduced-motion: reduce) {
   .portfolio-home .fluid-canvas { display: none; }
   .portfolio-home .portrait-base { visibility: visible; }
-}
-
-/* Drift a cached contour plate on the compositor instead of tracing hundreds
-   of thousands of marching-square cells in the fluid's animation loop. */
-.portfolio-home .bg-canvas { animation: contourDrift 32s ease-in-out infinite alternate; }
-@keyframes contourDrift {
-  from { transform: scale(1.05) translate3d(-.5%, -.4%, 0); }
-  to   { transform: scale(1.05) translate3d(.5%, .4%, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .portfolio-home .bg-canvas { animation: none; }
 }

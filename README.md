@@ -27,14 +27,21 @@ window.SiteConfig = {
 };
 ```
 
-**Images** — the landing uses your existing `assets/images/portrait.webp`
-cutout. Outside the fluid it is rendered in warm graphite; inside the fluid it
-returns to its original colour. Both states use the same image coordinates,
+**Images** — the landing uses `assets/images/portrait-fashion-editorial.webp`,
+a transparent illustrated portrait with restrained shading and dark tailoring.
+The original `portrait.webp` remains unchanged. The generated PNG and generation
+prompt are retained in `assets/images/source/`. Outside the fluid the new portrait
+is gently muted; inside the fluid it returns to its full colour.
+Both states use the same image coordinates,
 so the face stays aligned as the composition moves.
 
-`assets/images/fluid-landscape.svg` is the original rose-and-ochre ribbon
-background revealed by the fluid. The old `portrait-illustration.webp` and
-`fluid-bg.webp` remain available, but are no longer used on the landing page.
+`assets/images/cinematic-interior.webp` supplies the full landing background:
+dark walnut panelling, navy curtains and warm light. The fluid uses the same
+scene texture. Its original PNG and prompt are in `assets/images/source/`.
+Earlier portrait and background assets remain available.
+The projects gallery reuses the room with a darker scrim and the same GPU fluid
+behind the cards. Its mouse strokes use elapsed-time smoothing; touch-only and
+reduced-motion views keep the static room. Hidden tabs pause the gallery loop.
 
 ---
 
@@ -53,7 +60,7 @@ state. No other module runs its own loop, so frame ordering is explicit and
 there's one place to profile:
 
 ```
-pointer smoothing → cached contours → slide/parallax
+pointer smoothing → slide/parallax
 → cached portrait bounds → GPU fluid + portrait composition → cursor
 ```
 
@@ -61,7 +68,7 @@ pointer smoothing → cached contours → slide/parallax
 
 | Module | What it does |
 |---|---|
-| `contours.js` | Marching squares over a Gaussian field. The landing caches the plate and moves it with a slow CSS transform; inner pages use a throttled, separable field calculation. |
+| `contours.js` | Inner-page marching squares over a Gaussian field, using a throttled, separable field calculation. |
 | `fluid.js` | GPU Navier–Stokes with elapsed-time dissipation, bounded pointer strokes, smooth density edges, and a single premultiplied display pass for both portrait and background. |
 | `liquid-mask.js` | Passes the responsive portrait bounds to the GPU. No SVG blur or cross-canvas image copy. |
 | `nameplate.js` | Per-letter reels. Each lands on an exact multiple of glyph-height, then collapses back to a single glyph — without that reset the DOM grows every swap and letters drift off-baseline. |
@@ -74,9 +81,9 @@ pointer smoothing → cached contours → slide/parallax
 - Pointer events update a target; the shared animation loop injects a bounded,
   interpolated stroke. The first event never draws a streak from the corner.
 - Easing and fluid dissipation use elapsed time, so refresh rate does not change
-  their speed. The paper grain is drawn once on the landing. Slow frames use a capped step, with no catch-up loop.
-- The landing's contours draw once per resize and drift on the compositor.
-  Gaussian field evaluation is separable, avoiding per-cell trig calculations.
+  their speed. Slow frames use a capped step, with no catch-up loop.
+- The landing uses a preloaded 42 KB WebP room background. Inner-page Gaussian
+  field evaluation is separable, avoiding per-cell trig calculations.
 - Portrait, colour reveal and background stay in one WebGL context. There are
   no GPU readbacks and no per-frame copies into a 2D canvas.
 - Rendering resolution is capped; smaller devices use a cheaper solver.
