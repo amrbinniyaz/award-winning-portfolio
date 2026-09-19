@@ -62,15 +62,17 @@ document.getElementById('run').onclick = async () => {
       w.Contours.draw=(...args)=>{const start=performance.now();draw(...args);qa.contours.push(performance.now()-start);};
     }
     let start, last;
+    const names=[];
     function sample(ts) {
       if (!start) start = ts;
       if (last && ts-start > 1200) qa.frames.push(ts-last);
       last = ts;
       const t=(ts-start)/1000;
+      if (!gallery && w.Nameplate && names[names.length-1]!==w.Nameplate.current) names.push(w.Nameplate.current);
       if (t > 1.2 && t < 4.2) {
         w.document.dispatchEvent(new w.PointerEvent('pointermove', {clientX:w.innerWidth*(.5+.35*Math.sin(t*3)),clientY:w.innerHeight*(.45+.25*Math.cos(t*4)),pointerType:mode==='mobile'?'touch':'mouse',bubbles:true}));
       }
-      if (t < 5) {requestAnimationFrame(sample); return;}
+      if (t < (!gallery && mode==='mobile' ? 11 : 5)) {requestAnimationFrame(sample); return;}
       const values=qa.frames.sort((a,b)=>a-b);
       const rect=w.document.getElementById(gallery ? 'fluidCanvas' : 'portraitFrame').getBoundingClientRect();
       const reduced=mode==='reduced', fallback=mode==='nogl';
@@ -91,6 +93,12 @@ document.getElementById('run').onclick = async () => {
         checks['Category filter works with fluid']=visible.length===3&&visible.every(card=>card.dataset.category==='Web Design');
         checks['Fluid stays behind content']=w.getComputedStyle(w.document.querySelector('.bg-layer')).pointerEvents==='none';
       }
+      if (!gallery && mode==='mobile') {
+        checks['Mobile name alternates both ways']=names.slice(0,3).join(',')==='BINNIYAZ,AMR,BINNIYAZ';
+        const projectLink=w.document.getElementById('sideLeft');
+        checks['Projects has a touch target']=projectLink.getBoundingClientRect().width>=44;
+      }
+      if (!gallery && reduced) checks['Reduced motion keeps name still']=names.length===1;
       output.textContent=JSON.stringify({mode,checks,medianFrameMs:+values[Math.floor(values.length/2)].toFixed(2),p95FrameMs:+values[Math.floor(values.length*.95)].toFixed(2),readbacks:qa.readbacks,splats:qa.splats,errors:qa.errors,renderer:qa.renderer,fluidCpuMs:qa.cpu.reduce((a,b)=>a+b,0)/(qa.cpu.length||1),contourCpuMs:qa.contours.reduce((a,b)=>a+b,0)/(qa.contours.length||1),rafCpuMs:qa.rafCpu.reduce((a,b)=>a+b,0)/(qa.rafCpu.length||1)},null,2);
     }
     requestAnimationFrame(sample);

@@ -22,6 +22,8 @@
   /* True only where a real cursor exists. Gates the interactions that are
      meaningless on touch — the left/right slide and the depth parallax. */
   var HAS_FINE_POINTER = window.matchMedia('(pointer: fine)').matches;
+  var mobileName = window.matchMedia('(max-width: 600px), (pointer: coarse)');
+  var nameTimer = null, nameReady = false;
 
   /* ── Shared state ────────────────────────────────────────── */
 
@@ -43,6 +45,22 @@
 
   // Convert 60Hz tuning to elapsed-time easing for high-refresh displays.
   function ease(value, dt) { return 1 - Math.pow(1 - value, dt * 60); }
+
+  // Touch visitors get the same letter reels without needing a hover gesture.
+  function scheduleMobileName() {
+    clearTimeout(nameTimer);
+    nameTimer = null;
+    if (!nameReady || !mobileName.matches || reduced || document.hidden) return;
+    nameTimer = setTimeout(function () {
+      var nameplate = window.Nameplate;
+      if (nameplate && !nameplate.isAnimating && !document.body.classList.contains('on-dark')) {
+        var names = CFG.names || {};
+        var left = names.left || 'AMR', right = names.right || 'BINNIYAZ';
+        nameplate.set(nameplate.current === left ? right : left, true);
+      }
+      scheduleMobileName();
+    }, 4000);
+  }
 
   /* ── Idle behaviour ──────────────────────────────────────────
      After a period of stillness the fluid drives itself, so the page never
@@ -167,7 +185,7 @@
     // "which half is the cursor in", which is meaningless without a cursor.
     //
     // Hybrid laptops can have a fine pointer AND touch: gate each event too.
-    if (!HAS_FINE_POINTER || e.pointerType === 'touch') {
+    if (!HAS_FINE_POINTER || mobileName.matches || e.pointerType === 'touch') {
       isIdle = false;
       clearTimeout(idleTimer);
       idleTimer = setTimeout(function () { isIdle = true; }, IDLE_MS);
@@ -265,6 +283,7 @@
       if (e.pointerType === 'touch') pointerActive = false;
     }, { passive: true });
     document.addEventListener('visibilitychange', function () {
+      scheduleMobileName();
       if (frameId !== null) cancelAnimationFrame(frameId);
       frameId = null;
       pointerActive = false;
@@ -284,12 +303,18 @@
     // neither is armed on touch — parallax reads pointerY, which touchmove
     // also updates, and would jolt the portrait vertically on every tap.
     document.addEventListener('preloader:done', function () {
+      nameReady = true;
+      scheduleMobileName();
       if (!HAS_FINE_POINTER || reduced) return;
       setTimeout(function () { slideReady = true; }, 400);
       setTimeout(function () { parallaxReady = true; }, 900);
     });
 
+    mobileName.addEventListener('change', scheduleMobileName);
+    window.addEventListener('pagehide', function () { clearTimeout(nameTimer); });
+    window.addEventListener('pageshow', scheduleMobileName);
     if (window.Preloader) window.Preloader.init();
+    else { nameReady = true; scheduleMobileName(); }
 
     idleTimer = setTimeout(function () { isIdle = true; }, IDLE_MS);
     requestAnimationFrame(function (ts) {
@@ -299,6 +324,7 @@
 
     window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function (event) {
       reduced = event.matches;
+      scheduleMobileName();
       if (reduced) {
         slideReady = parallaxReady = false;
         slideGroup.style.transform = '';

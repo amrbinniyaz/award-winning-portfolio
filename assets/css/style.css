@@ -939,3 +939,30 @@ html.is-entering .site-nav       { animation: enterDown  0.75s cubic-bezier(0.22
   .portfolio-home .fluid-canvas { display: none; }
   .portfolio-home .portrait-base { visibility: visible; }
 }
+
+/* A quiet illuminated tab makes the mobile Projects link feel tappable. */
+@media (max-width: 600px), (pointer: coarse) {
+  .portfolio-home .side { min-width: 44px; min-height: 44px; justify-content: center; }
+  .portfolio-home .side--left { padding: 16px 10px; }
+  .portfolio-home .side--left .side-text { color: #f1dab5; }
+  .portfolio-home .side--left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border: 1px solid rgba(229, 211, 176, .55);
+    border-radius: 3px;
+    background: rgba(12, 13, 15, .55);
+    box-shadow: 0 0 18px rgba(229, 195, 143, .16);
+    pointer-events: none;
+  }
+  .portfolio-home:not(.boot-pending) .side--left::before {
+    animation: mobileProjectHint 4s ease-in-out infinite;
+  }
+  .portfolio-home .side--left:active::before { opacity: 1; background: rgba(92, 71, 44, .65); }
+  .portfolio-home .side--left:focus-visible { outline: 2px solid #f1dab5; outline-offset: 4px; }
+}
+@keyframes mobileProjectHint {
+  0%, 100% { opacity: .5; }
+  50% { opacity: 1; }
+}
