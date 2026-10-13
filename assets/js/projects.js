@@ -53,7 +53,7 @@
       var bar = document.createElement('div');
       bar.className = 'work-preview-bar';
       card.className = 'work-card is-in';
-      link.href = 'project.html?slug=' + encodeURIComponent(p.slug);
+      link.href = 'work/' + encodeURIComponent(p.slug) + '/';
       card.dataset.category = p.category;
       card.dataset.slug = p.slug;
 

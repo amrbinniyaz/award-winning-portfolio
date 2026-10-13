@@ -1,0 +1,6 @@
+# Search engines and AI answer engines are welcome.
+User-agent: *
+Allow: /
+Disallow: /project.html
+
+Sitemap: https://amrniyaz.com/sitemap.xml

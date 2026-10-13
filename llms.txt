@@ -1,0 +1,41 @@
+# Amr Binniyaz
+
+> Amr Binniyaz is a UK-based QA lead and front-end developer with 9+ years of experience: leading quality across a platform of 250+ school websites — accessibility (WCAG), Core Web Vitals, manual and automated testing — building internal QA tooling, and designing and developing websites for clients.
+
+- Role: QA Lead & Front-end Developer
+- Based: High Wycombe, United Kingdom
+- Focus: Quality assurance, Test automation, Web accessibility, WCAG, Core Web Vitals, Front-end development, Web design, UI design, Branding, Illustration
+- Contact: amrbinniyaz@gmail.com
+- Profile: https://github.com/amrbinniyaz
+
+## Pages
+
+- [Amr Binniyaz — QA Lead & Front-end Developer](https://amrniyaz.com/): Amr Binniyaz — QA lead and front-end developer — accessibility, test automation, web design and internal tooling. Portfolio, résumé and case studies.
+- [Projects — Amr Binniyaz](https://amrniyaz.com/projects.html): Selected work by Amr Binniyaz — client websites, QA and accessibility tools, branding and illustration.
+- [Resume — Amr Binniyaz, QA Lead & Front-end Developer](https://amrniyaz.com/resume.html): Amr Binniyaz — QA lead and front-end developer. Work history, education and capabilities across QA, accessibility, test automation and AI engineering.
+- [Contact — Amr Binniyaz](https://amrniyaz.com/contact.html): Get in touch with Amr Binniyaz, QA lead and front-end developer based in the UK — for QA, accessibility and web projects.
+
+## Case studies
+
+- [Apex — School Admissions Website](https://amrniyaz.com/work/apex-international-school/): A school website for Apex International School in Kozhikode, built to turn interest into admissions: a warm first impression of school life, clear proof of results, and an easy route to enquire or book a visit.
+- [Vegan Valley — Rooted in Motion](https://amrniyaz.com/work/vegan-valley-3d/): An interactive plant-based brand website that brings the product into the page: a real-time 3D bottle, scroll-led storytelling and a colourful route from first impression to flavour discovery.
+- [Melahah — Marine Consulting](https://amrniyaz.com/work/melahah/): A marine consulting website for a client in Saudi Arabia, pairing maritime imagery with a clear route through expertise, company values and enquiries.
+- [Integrated — Industrial Supply](https://amrniyaz.com/work/integrated-ksa/): An industrial supplier website for Integrated Technical Trading in Saudi Arabia, connecting heavy equipment imagery, sector expertise and a clear product catalogue.
+- [Content Migration Tool](https://amrniyaz.com/work/content-migration-tool/): A website content migration tool that captures existing pages, supports content review and editing, rebuilds the sitemap, and transfers the approved structure into a CMS.
+- [Client A11y — Accessibility Monitoring](https://amrniyaz.com/work/accessibility-audit/): An internal dashboard that runs Lighthouse and axe-core against 270 client sites, keeps every score as history rather than a snapshot, and turns each failure into a recommendation someone can actually act on.
+- [BugHerd Dashboard — Bug Trend Analytics](https://amrniyaz.com/work/bugherd-dashboard/): An analytics layer over BugHerd that mirrors 227 client projects into a local database, records every status change as it happens, and turns a bug board into a trend you can make a decision from.
+
+## Other work
+
+- [Fixigate UAE](https://amrniyaz.com/work/fixigate-uae/): Media, 2019
+- [Aura Luxury Lighting](https://amrniyaz.com/work/aura-luxury-lighting/): Media, 2019
+- [Vegan Valley](https://amrniyaz.com/work/portraits/): Illustration, 2019
+- [Lulu group](https://amrniyaz.com/work/history-of-van/): Media, 2019
+- [Leymoon Restaurant](https://amrniyaz.com/work/changes-lion/): Media, 2019
+- [Bottle Logo Mockup](https://amrniyaz.com/work/bottle-logo-mockup-2/): Illustration, 2019
+- [An award winning architecture and interior designing firm in Calicut.](https://amrniyaz.com/work/an-award-winning-architecture-and-interior-designing-firm-in-calicut/): Media, 2019
+- [Branding Presentation Kit](https://amrniyaz.com/work/branding-presentation-kit-2/): Illustration, 2019
+- [Branding Presentation Kit](https://amrniyaz.com/work/branding-presentation-kit/): Illustration, 2019
+- [Portrait Sketch](https://amrniyaz.com/work/portrait-sketch/): Illustration, 2019
+- [Creatin — Way The Right Way](https://amrniyaz.com/work/creatin-way-the-right-way/): Video, 2019
+- [Too Future. Guest Mix 108: Laxcity](https://amrniyaz.com/work/too-future-guest-mix-108-laxcity/): Media, 2019

@@ -1,21 +1,21 @@
 /**
  * PROJECT DETAIL
  *
- * Renders a single project from `?slug=`. Six of the twelve projects carry
- * only a cover image and no gallery or copy, so the layout is built to look
- * deliberate when that is all there is: the hero simply becomes the piece,
- * and the gallery section is omitted rather than left as an empty gap.
+ * Project pages are static HTML under work/<slug>/, written by
+ * tools/build-seo.mjs — that script is the only place their markup is built.
+ * This file adds behaviour on top: gallery reveal, an image lightbox, the
+ * "On this page" highlight, and page transitions. Legacy project.html?slug=
+ * links are forwarded to the static pages.
  */
 (function () {
   'use strict';
 
   var projects = window.Projects || [];
-  var root, observer = null;
+  var root;
 
-  function getSlug() {
-    var m = /[?&]slug=([^&]+)/.exec(window.location.search);
-    return m ? decodeURIComponent(m[1]) : null;
-  }
+  // Set before first paint of the gallery, so figures can start hidden and
+  // rise in — without JS they simply stay visible.
+  document.documentElement.classList.add('pd-reveal');
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -24,271 +24,86 @@
     return node;
   }
 
-  function figure(item, alt) {
-    var src = typeof item === 'string' ? item : item.src;
-    if (item.alt) alt = item.alt;
-    var fig = el('figure', 'gallery-figure');
-    var img = el('img');
-    img.src = src;
-    img.alt = alt;
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    fig.appendChild(img);
-    if (item.caption) fig.appendChild(el('figcaption', 'gallery-caption', item.caption));
-    return fig;
-  }
-
-  function specs(project, index) {
-    var list = el('dl', 'project-specs');
-    var cs = project.caseStudy;
-
-    // A case study describes itself better through role/timeline/status than
-    // through the gallery-oriented category/year/index triple.
-    var rows = cs
-      ? [
-          ['Client', cs.client],
-          ['Scope', cs.scope],
-          ['Role', cs.role],
-          ['Timeline', cs.timeline || project.year],
-          ['Status', cs.status],
-          ['Category', project.category],
-        ]
-      : [
-          ['Category', project.category],
-          ['Year', project.year || '—'],
-          ['Index', String(index + 1).padStart(2, '0') + ' / ' + String(projects.length).padStart(2, '0')],
-        ];
-
-    rows.filter(function (pair) { return pair[1]; }).forEach(function (pair) {
-      var wrapper = el('div', 'spec');
-      wrapper.appendChild(el('dt', null, pair[0]));
-      wrapper.appendChild(el('dd', null, pair[1]));
-      list.appendChild(wrapper);
-    });
-
-    return list;
-  }
-
-  /* ── Case study ──────────────────────────────────────────────
-     Only built when a project carries a `caseStudy` object. Each block is
-     skipped individually if its data is absent, so a partially-filled case
-     study degrades to whatever is actually written rather than leaving
-     empty headings behind. */
-
-  function sectionHead(nr, title) {
-    var head = el('div', 'section-head');
-    head.appendChild(el('span', 'section-nr', nr));
-    head.appendChild(el('h2', 'section-title', title));
-    head.appendChild(el('span', 'section-rule'));
-    return head;
-  }
-
-  function caseStudy(cs) {
-    var wrap = el('div', 'case-study');
-    var n = 0;
-    var pad = function () { return String(++n).padStart(2, '0'); };
-
-    if (cs.summary) {
-      var lede = el('p', 'case-lede', cs.summary);
-      wrap.appendChild(lede);
-    }
-
-    if (cs.problem) {
-      var pSec = el('section', 'section');
-      pSec.appendChild(sectionHead(pad(), 'The problem'));
-      pSec.appendChild(el('p', 'case-body', cs.problem));
-      wrap.appendChild(pSec);
-    }
-
-    if (cs.approach && cs.approach.length) {
-      var aSec = el('section', 'section');
-      aSec.appendChild(sectionHead(pad(), 'Approach'));
-      var steps = el('ol', 'case-steps');
-      cs.approach.forEach(function (step) {
-        var li = el('li', 'case-step');
-        li.appendChild(el('h3', 'case-step-title', step.title));
-        li.appendChild(el('p', 'case-step-body', step.body));
-        steps.appendChild(li);
-      });
-      aSec.appendChild(steps);
-      wrap.appendChild(aSec);
-    }
-
-    if (cs.stack && cs.stack.length) {
-      var sSec = el('section', 'section');
-      sSec.appendChild(sectionHead(pad(), 'Stack'));
-      var groups = el('div', 'stack-groups');
-      cs.stack.forEach(function (g) {
-        var group = el('div', 'stack-group');
-        group.appendChild(el('h3', null, g.group));
-        var tags = el('div', 'tag-list');
-        (g.items || []).forEach(function (item) {
-          tags.appendChild(el('span', 'tag', item));
-        });
-        group.appendChild(tags);
-        groups.appendChild(group);
-      });
-      sSec.appendChild(groups);
-      wrap.appendChild(sSec);
-    }
-
-    if (cs.outcome && cs.outcome.length) {
-      var oSec = el('section', 'section');
-      oSec.appendChild(sectionHead(pad(), 'What it changes'));
-      var list = el('ul', 'case-outcomes');
-      cs.outcome.forEach(function (line) {
-        list.appendChild(el('li', null, line));
-      });
-      oSec.appendChild(list);
-      wrap.appendChild(oSec);
-    }
-
-    if (cs.note) wrap.appendChild(el('p', 'case-note', cs.note));
-
-    return wrap;
-  }
-
-  function prevNext(index) {
-    var nav = el('nav', 'project-nav');
-    nav.setAttribute('aria-label', 'Project navigation');
-
-    [
-      { key: 'prev', label: 'Previous', item: projects[index - 1] },
-      { key: 'next', label: 'Next', item: projects[index + 1] },
-    ].forEach(function (side) {
-      var link = el('a', 'pnav pnav--' + side.key);
-      if (!side.item) {
-        link.className += ' is-empty';
-        link.setAttribute('aria-hidden', 'true');
-        link.tabIndex = -1;
-        nav.appendChild(link);
-        return;
-      }
-      link.href = 'project.html?slug=' + encodeURIComponent(side.item.slug);
-      link.dataset.slug = side.item.slug;
-      link.appendChild(el('span', 'pnav-label', side.label));
-      link.appendChild(el('span', 'pnav-title', side.item.title));
-      nav.appendChild(link);
-    });
-
-    return nav;
+  function querySlug() {
+    var m = /[?&]slug=([^&]+)/.exec(window.location.search);
+    return m ? decodeURIComponent(m[1]) : null;
   }
 
   function renderMissing(slug) {
     root.innerHTML = '';
-    var head = el('header', 'project-head');
+    var head = el('header', 'pd-head');
+    var main = el('div', 'pd-head-main');
     var back = el('a', 'project-back', '← All work');
     back.href = 'projects.html';
-    head.appendChild(back);
-    head.appendChild(el('h1', 'project-title', 'Project not found'));
-    var note = el('p', 'project-note',
-      slug ? 'No project matches "' + slug + '".' : 'No project was specified.');
-    head.appendChild(note);
+    main.appendChild(back);
+    main.appendChild(el('h1', 'project-title', 'Project not found'));
+    main.appendChild(el('p', 'pd-summary',
+      slug ? 'No project matches "' + slug + '".' : 'No project was specified.'));
+    head.appendChild(main);
     root.appendChild(head);
   }
 
-  function render(project, index) {
-    document.title = project.title + ' — Amr Binniyaz';
-    var desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute('content', project.description || project.title + ' — ' + project.category + ' work by Amr Binniyaz.');
+  /* ── Gallery reveal ── */
+  function revealFigures() {
+    var figures = root.querySelectorAll('.gallery-figure');
+    if (window.Reveal) window.Reveal.watch(figures, { trigger: 1.5 });
+    else Array.prototype.forEach.call(figures, function (f) { f.classList.add('is-in'); });
+  }
 
-    root.innerHTML = '';
+  /* ── Lightbox ── */
+  function wireLightbox() {
+    var buttons = root.querySelectorAll('[data-zoom]');
+    if (!buttons.length || typeof HTMLDialogElement !== 'function') return;
 
-    /* Header */
-    var head = el('header', 'project-head');
-    var back = el('a', 'project-back');
-    back.href = 'projects.html';
-    back.dataset.back = 'true';
-    back.appendChild(el('span', null, '←'));
-    back.appendChild(el('span', null, 'All work'));
-    head.appendChild(back);
-    head.appendChild(el('h1', 'project-title', project.title));
-    head.appendChild(specs(project, index));
+    var dialog = el('dialog', 'pd-lightbox');
+    dialog.setAttribute('aria-label', 'Enlarged image');
+    var img = el('img');
+    var close = el('button', 'pd-lightbox-close', '×');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Close');
+    dialog.appendChild(close);
+    dialog.appendChild(img);
+    document.body.appendChild(dialog);
 
-    if (project.description) {
-      head.appendChild(el('p', 'project-desc', project.description));
-    }
-    var actions = el('div', 'project-actions');
-    if (project.video) {
-      var watch = el('a', 'project-action', 'Watch the walkthrough ↓');
-      watch.href = '#project-film';
-      actions.appendChild(watch);
-    }
-    var destination = project.website || project.liveUrl;
-    if (!destination && project.localPreview && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) destination = project.localPreview;
-    if (destination) {
-      var visit = el('a', 'project-action', project.website || project.liveUrl ? 'Visit the website ↗' : 'Open local preview ↗');
-      visit.href = destination;
-      visit.target = '_blank';
-      visit.rel = 'noopener noreferrer';
-      actions.appendChild(visit);
-    }
-    if (actions.children.length) head.appendChild(actions);
-    root.appendChild(head);
-
-    /* Hero */
-    if (project.cover) {
-      var hero = el('div', 'project-hero');
-      if (project.video) {
-        hero.id = 'project-film';
-        hero.classList.add('project-hero--film');
-        var film = el('video', 'project-film');
-        film.src = project.video;
-        film.poster = project.cover;
-        film.controls = true;
-        film.playsInline = true;
-        film.preload = 'none';
-        film.setAttribute('aria-label', project.title + ' website walkthrough');
-        hero.appendChild(film);
-        if (project.videoCaption) hero.appendChild(el('p', 'film-caption', project.videoCaption));
-        document.addEventListener('visibilitychange', function () { if (document.hidden) film.pause(); });
-      } else {
-        var heroImg = el('img');
-        heroImg.src = project.cover;
-        heroImg.alt = project.title;
-        heroImg.fetchPriority = 'high';
-        hero.appendChild(heroImg);
-      }
-      root.appendChild(hero);
-    }
-
-    /* Case study — rendered in place of a bare gallery when present. */
-    if (project.caseStudy) {
-      root.appendChild(caseStudy(project.caseStudy));
-    }
-
-    /* Gallery — omitted entirely when empty. */
-    if (project.gallery && project.gallery.length) {
-      var gallery = el('div', 'project-gallery');
-      project.gallery.forEach(function (src, i) {
-        gallery.appendChild(figure(src, project.title + ' — image ' + (i + 2)));
+    Array.prototype.forEach.call(buttons, function (btn) {
+      btn.addEventListener('click', function () {
+        var source = btn.querySelector('img');
+        img.src = btn.dataset.zoom;
+        img.alt = source ? source.alt : '';
+        dialog.showModal();
       });
-      root.appendChild(gallery);
-      revealFigures(gallery);
-    } else {
-      var spacer = el('div');
-      spacer.style.height = 'clamp(40px, 7vh, 88px)';
-      root.appendChild(spacer);
-    }
-
-    root.appendChild(prevNext(index));
-
-    /* Footer */
-    var foot = el('footer', 'site-foot');
-    foot.appendChild(el('span', null, '© ' + new Date().getFullYear() + ' Amr Binniyaz'));
-    var home = el('a', null, 'Back to home');
-    home.href = '/';
-    foot.appendChild(home);
-    root.appendChild(foot);
+    });
+    // Any click closes it — on the image, the backdrop or the button.
+    dialog.addEventListener('click', function () { dialog.close(); });
   }
 
-  function revealFigures(container) {
-    if (observer) observer.cancel();
-    var figures = container.querySelectorAll('.gallery-figure');
+  /* ── "On this page" highlight ── */
+  function wireContents() {
+    var links = root.querySelectorAll('.pd-toc a');
+    if (!links.length || !('IntersectionObserver' in window)) return;
 
-    observer = window.Reveal
-      ? window.Reveal.watch(figures, { trigger: 1.5 })
-      : (Array.prototype.forEach.call(figures, function (f) { f.classList.add('is-in'); }), null);
+    var byId = {};
+    Array.prototype.forEach.call(links, function (a) { byId[a.hash.slice(1)] = a; });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        Array.prototype.forEach.call(links, function (a) { a.removeAttribute('aria-current'); });
+        var link = byId[entry.target.id];
+        if (link) link.setAttribute('aria-current', 'true');
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+
+    Object.keys(byId).forEach(function (id) {
+      var section = document.getElementById(id);
+      if (section) io.observe(section);
+    });
+  }
+
+  function wireFilm() {
+    var film = root.querySelector('.project-film');
+    if (!film) return;
+    document.addEventListener('visibilitychange', function () { if (document.hidden) film.pause(); });
   }
 
   function wireNavigation() {
@@ -298,7 +113,7 @@
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
 
       var href = link.getAttribute('href');
-      if (!href || href.charAt(0) === '#' || link.target === '_blank' || /^https?:/.test(href)) return;
+      if (!href || href.charAt(0) === '#' || (link.hash && link.pathname === location.pathname) || link.target === '_blank' || /^https?:/.test(href)) return;
 
       e.preventDefault();
 
@@ -325,18 +140,22 @@
     root = document.getElementById('projectRoot');
     if (!root) return;
 
-    var slug = getSlug();
-    var index = projects.findIndex(function (p) {
-      return p.slug === slug || (p.aliases || []).indexOf(slug) !== -1;
-    });
-    if (index !== -1 && projects[index].slug !== slug) {
-      var canonical = new URL(window.location.href);
-      canonical.searchParams.set('slug', projects[index].slug);
-      window.history.replaceState(null, '', canonical);
+    if (!root.dataset.slug) {
+      var slug = querySlug();
+      var match = projects.find(function (p) {
+        return p.slug === slug || (p.aliases || []).indexOf(slug) !== -1;
+      });
+      if (match) {
+        window.location.replace('work/' + encodeURIComponent(match.slug) + '/' + window.location.hash);
+        return;
+      }
+      renderMissing(slug);
+    } else {
+      revealFigures();
+      wireLightbox();
+      wireContents();
+      wireFilm();
     }
-
-    if (index === -1) renderMissing(slug);
-    else render(projects[index], index);
 
     wireNavigation();
 

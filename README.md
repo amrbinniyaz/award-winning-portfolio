@@ -194,10 +194,10 @@ dependencies. Originals remain available for the full case-study galleries.
 Load `project-thumbnails.js` after the project data, `melahah-project.js` and
 `integrated-project.js`.
 
-Vegan Valley includes a muted 218 KB looping preview and an on-demand full
+Vegan Valley includes a muted 133 KB looping preview and an on-demand full
 walkthrough. Previews pause outside the viewport, in hidden tabs, or when
 explicitly paused; reduced-motion and data-saving preferences prevent automatic
-playback. Its localhost link appears only when this portfolio is viewed locally.
+playback. Its case study links to the live site at veganvalley.in.
 Melahah and Integrated KSA use full-page screenshots that scroll on hover or keyboard focus,
 with a static view for reduced motion. Gallery entries accept either a path or
 an object with `src`, `alt` and `caption`.
@@ -299,3 +299,19 @@ The fluid solver follows the approach in Pavel Dobryakov's
 Design and interaction direction is modelled on the CRT/fluid genre of portfolio
 sites — the boot-screen reveal, topographic backdrop, and metaball portrait
 reveal are reimplementations of those techniques, written from scratch here.
+
+---
+
+## SEO / AEO
+
+Projects render client-side, so `tools/build-seo.mjs` writes crawlable copies:
+static project pages under `work/<slug>/`, all `<head>` metadata and JSON-LD
+(between `<!-- seo:start -->` markers), the static project list, `sitemap.xml`,
+`robots.txt` and `llms.txt`. **Re-run it whenever projects or the bio change:**
+
+```bash
+node tools/build-seo.mjs
+```
+
+Name, job title, bio, location and profile links live in the `SITE` object at
+the top of that script.

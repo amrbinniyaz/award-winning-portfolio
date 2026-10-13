@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>html{background:#FBFBFB}</style>
+
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('txLabel') === null) return;
+        document.documentElement.classList.add('skip-boot');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.documentElement.classList.add('tx-pending');
+        var cover = document.createElement('div');
+        cover.id = 'txInitCover';
+        cover.style.cssText = 'position:fixed;inset:0;z-index:9890;pointer-events:none';
+        cover.style.background = sessionStorage.getItem('txColor') || '#1a1614';
+        document.documentElement.appendChild(cover);
+      } catch (e) { /* Navigation remains usable without session storage. */ }
+    })();
+  </script>
+
+  <!-- seo:start -->
+  <title>Branding Presentation Kit — Amr Binniyaz</title>
+  <meta name="description" content="Branding Presentation Kit — illustration work by Amr Binniyaz (2019).">
+  <meta name="author" content="Amr Binniyaz">
+  <link rel="canonical" href="https://amrniyaz.com/work/branding-presentation-kit/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Amr Binniyaz">
+  <meta property="og:title" content="Branding Presentation Kit — Amr Binniyaz">
+  <meta property="og:description" content="Branding Presentation Kit — illustration work by Amr Binniyaz (2019).">
+  <meta property="og:url" content="https://amrniyaz.com/work/branding-presentation-kit/">
+  <meta property="og:image" content="https://amrniyaz.com/assets/images/work/branding-presentation-kit-cover-00.webp">
+  <meta property="og:image:alt" content="Branding Presentation Kit">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Branding Presentation Kit — Amr Binniyaz">
+  <meta name="twitter:description" content="Branding Presentation Kit — illustration work by Amr Binniyaz (2019).">
+  <meta name="twitter:image" content="https://amrniyaz.com/assets/images/work/branding-presentation-kit-cover-00.webp">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://amrniyaz.com/#person",
+        "name": "Amr Binniyaz",
+        "jobTitle": "QA Lead & Front-end Developer",
+        "description": "Amr Binniyaz is a UK-based QA lead and front-end developer with 9+ years of experience: leading quality across a platform of 250+ school websites — accessibility (WCAG), Core Web Vitals, manual and automated testing — building internal QA tooling, and designing and developing websites for clients.",
+        "url": "https://amrniyaz.com/",
+        "image": "https://amrniyaz.com/assets/images/og-default.jpg",
+        "email": "mailto:amrbinniyaz@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "High Wycombe",
+          "addressCountry": "GB"
+        },
+        "knowsAbout": [
+          "Quality assurance",
+          "Test automation",
+          "Web accessibility",
+          "WCAG",
+          "Core Web Vitals",
+          "Front-end development",
+          "Web design",
+          "UI design",
+          "Branding",
+          "Illustration"
+        ],
+        "sameAs": [
+          "https://github.com/amrbinniyaz"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://amrniyaz.com/#website",
+        "url": "https://amrniyaz.com/",
+        "name": "Amr Binniyaz",
+        "description": "QA lead and front-end developer — accessibility, test automation, web design and internal tooling.",
+        "publisher": {
+          "@id": "https://amrniyaz.com/#person"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://amrniyaz.com/work/branding-presentation-kit/#webpage",
+        "url": "https://amrniyaz.com/work/branding-presentation-kit/",
+        "name": "Branding Presentation Kit — Amr Binniyaz",
+        "description": "Branding Presentation Kit — illustration work by Amr Binniyaz (2019).",
+        "isPartOf": {
+          "@id": "https://amrniyaz.com/#website"
+        },
+        "mainEntity": {
+          "@id": "https://amrniyaz.com/work/branding-presentation-kit/#work"
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://amrniyaz.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Projects",
+              "item": "https://amrniyaz.com/projects.html"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Branding Presentation Kit",
+              "item": "https://amrniyaz.com/work/branding-presentation-kit/"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "CreativeWork",
+        "@id": "https://amrniyaz.com/work/branding-presentation-kit/#work",
+        "name": "Branding Presentation Kit",
+        "description": "Branding Presentation Kit — illustration work by Amr Binniyaz (2019).",
+        "url": "https://amrniyaz.com/work/branding-presentation-kit/",
+        "image": [
+          "https://amrniyaz.com/assets/images/work/branding-presentation-kit-cover-00.webp",
+          "https://amrniyaz.com/assets/images/work/branding-presentation-kit-01.webp",
+          "https://amrniyaz.com/assets/images/work/branding-presentation-kit-02.webp",
+          "https://amrniyaz.com/assets/images/work/branding-presentation-kit-03.webp"
+        ],
+        "genre": "Illustration",
+        "creator": {
+          "@id": "https://amrniyaz.com/#person"
+        },
+        "dateCreated": "2019"
+      }
+    ]
+  }
+  </script>
+  <!-- seo:end -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
+
+  <link rel="stylesheet" href="assets/css/style.css?v=20260910-transitions2">
+  <link rel="stylesheet" href="assets/css/nav.css?v=20260910-menu-font1">
+  <link rel="stylesheet" href="assets/css/projects.css?v=20261013-detail1">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="page-scroll">
+
+  <a href="/work/branding-presentation-kit/#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <div class="bg-layer" aria-hidden="true">
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <div class="bg-noise"></div>
+  </div>
+
+  <main id="mainContent">
+    <div class="wrap" id="projectRoot" data-slug="branding-presentation-kit">
+      <header class="pd-head">
+        <div class="pd-head-main">
+          <a class="project-back" href="projects.html" data-back="true"><span aria-hidden="true">←</span><span>All work</span></a>
+          <p class="pd-eyebrow"><span class="pd-chip">Illustration</span><span class="pd-chip">2019</span></p>
+          <h1 class="project-title">Branding Presentation Kit</h1>
+        </div>
+        <dl class="pd-facts">
+          <div class="pd-fact"><dt>Category</dt><dd>Illustration</dd></div>
+          <div class="pd-fact"><dt>Year</dt><dd>2019</dd></div>
+        </dl>
+      </header>
+      <div class="pd-gallery">
+      <figure class="gallery-figure">
+        <button class="pd-zoom" type="button" data-zoom="assets/images/work/branding-presentation-kit-cover-00.webp" aria-label="Enlarge image: Branding Presentation Kit"><img src="assets/images/work/branding-presentation-kit-cover-00.webp" alt="Branding Presentation Kit" loading="lazy" decoding="async"></button>
+      </figure>
+      <figure class="gallery-figure">
+        <button class="pd-zoom" type="button" data-zoom="assets/images/work/branding-presentation-kit-01.webp" aria-label="Enlarge image: Branding Presentation Kit — image 2"><img src="assets/images/work/branding-presentation-kit-01.webp" alt="Branding Presentation Kit — image 2" loading="lazy" decoding="async"></button>
+      </figure>
+      <figure class="gallery-figure">
+        <button class="pd-zoom" type="button" data-zoom="assets/images/work/branding-presentation-kit-02.webp" aria-label="Enlarge image: Branding Presentation Kit — image 3"><img src="assets/images/work/branding-presentation-kit-02.webp" alt="Branding Presentation Kit — image 3" loading="lazy" decoding="async"></button>
+      </figure>
+      <figure class="gallery-figure">
+        <button class="pd-zoom" type="button" data-zoom="assets/images/work/branding-presentation-kit-03.webp" aria-label="Enlarge image: Branding Presentation Kit — image 4"><img src="assets/images/work/branding-presentation-kit-03.webp" alt="Branding Presentation Kit — image 4" loading="lazy" decoding="async"></button>
+      </figure>
+      </div>
+      <nav class="project-nav" aria-label="More projects">
+        <a class="pnav pnav--prev" href="work/branding-presentation-kit-2/" data-slug="branding-presentation-kit-2">
+          <span class="pnav-thumb"><img src="assets/images/thumbnails/branding-presentation-kit-2.webp?v=de928ee8" alt="" loading="lazy" decoding="async"></span>
+          <span class="pnav-text"><span class="pnav-label">Previous project</span><span class="pnav-title">Branding Presentation Kit</span><span class="pnav-meta">Illustration · 2019</span></span>
+        </a>
+        <a class="pnav pnav--next" href="work/portrait-sketch/" data-slug="portrait-sketch">
+          <span class="pnav-thumb"><img src="assets/images/thumbnails/portrait-sketch.webp?v=66bfe1ae" alt="" loading="lazy" decoding="async"></span>
+          <span class="pnav-text"><span class="pnav-label">Next project</span><span class="pnav-title">Portrait Sketch</span><span class="pnav-meta">Illustration · 2019</span></span>
+        </a>
+      </nav>
+      <footer class="site-foot"><span>© 2026 Amr Binniyaz</span><a href="/">Back to home</a></footer>
+    </div>
+  </main>
+
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+  </div>
+
+  <div id="pageOverlay" aria-hidden="true"><span class="overlay-label" id="overlayLabel"></span></div>
+
+  <div class="page-tv-overlay" aria-hidden="true">
+    <div class="page-scanlines"></div>
+    <canvas class="page-grain-canvas" id="pageGrainCanvas"></canvas>
+    <div class="page-scanner-lines">
+      <span style="--dur:10s;--op:0.10"></span>
+      <span style="--dur:13s;--op:0.07"></span>
+      <span style="--dur:17s;--op:0.04"></span>
+    </div>
+    <div class="page-inner-glow"></div>
+    <div class="page-vignette"></div>
+  </div>
+
+  <div class="page-crt-bevel" aria-hidden="true"></div>
+  <div class="page-tv-frame" aria-hidden="true"></div>
+  <svg class="page-tv-stroke" aria-hidden="true"></svg>
+
+  <script src="assets/js/config.js?v=20260909-fluid5"></script>
+  <script src="assets/js/projects-data.js?v=20260910-transitions2"></script>
+  <script src="assets/js/melahah-project.js?v=20260910-transitions2"></script>
+  <script src="assets/js/integrated-project.js?v=20260910-transitions2"></script>
+  <script src="assets/js/apex-project.js?v=20261013-apex1"></script>
+  <script src="assets/js/project-thumbnails.js?v=20261013-apex1"></script>
+  <script src="assets/js/analytics.js" defer></script>
+  <script src="assets/js/reveal.js" defer></script>
+  <script src="assets/js/transition.js?v=20260910-transitions2" defer></script>
+  <script src="assets/js/contours.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/cursor.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/crt-overlay.js" defer></script>
+  <script src="assets/js/nav.js?v=20260910-transitions2" defer></script>
+  <script src="assets/js/project-detail.js?v=20261013-detail1" defer></script>
+</body>
+</html>

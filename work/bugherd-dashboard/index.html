@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>html{background:#FBFBFB}</style>
+
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('txLabel') === null) return;
+        document.documentElement.classList.add('skip-boot');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.documentElement.classList.add('tx-pending');
+        var cover = document.createElement('div');
+        cover.id = 'txInitCover';
+        cover.style.cssText = 'position:fixed;inset:0;z-index:9890;pointer-events:none';
+        cover.style.background = sessionStorage.getItem('txColor') || '#1a1614';
+        document.documentElement.appendChild(cover);
+      } catch (e) { /* Navigation remains usable without session storage. */ }
+    })();
+  </script>
+
+  <!-- seo:start -->
+  <title>BugHerd Dashboard — Bug Trend Analytics — Amr Binniyaz</title>
+  <meta name="description" content="An analytics layer over BugHerd that mirrors 227 client projects into a local database, records every status change as it happens, and turns a bug board into a trend you can make a decision from.">
+  <meta name="author" content="Amr Binniyaz">
+  <link rel="canonical" href="https://amrniyaz.com/work/bugherd-dashboard/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Amr Binniyaz">
+  <meta property="og:title" content="BugHerd Dashboard — Bug Trend Analytics — Amr Binniyaz">
+  <meta property="og:description" content="An analytics layer over BugHerd that mirrors 227 client projects into a local database, records every status change as it happens, and turns a bug board into a trend you can make a decision from.">
+  <meta property="og:url" content="https://amrniyaz.com/work/bugherd-dashboard/">
+  <meta property="og:image" content="https://amrniyaz.com/assets/images/work/bugherd-dashboard-01-project-stats.webp">
+  <meta property="og:image:alt" content="BugHerd Dashboard — Bug Trend Analytics">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BugHerd Dashboard — Bug Trend Analytics — Amr Binniyaz">
+  <meta name="twitter:description" content="An analytics layer over BugHerd that mirrors 227 client projects into a local database, records every status change as it happens, and turns a bug board into a trend you can make a decision from.">
+  <meta name="twitter:image" content="https://amrniyaz.com/assets/images/work/bugherd-dashboard-01-project-stats.webp">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://amrniyaz.com/#person",
+        "name": "Amr Binniyaz",
+        "jobTitle": "QA Lead & Front-end Developer",
+        "description": "Amr Binniyaz is a UK-based QA lead and front-end developer with 9+ years of experience: leading quality across a platform of 250+ school websites — accessibility (WCAG), Core Web Vitals, manual and automated testing — building internal QA tooling, and designing and developing websites for clients.",
+        "url": "https://amrniyaz.com/",
+        "image": "https://amrniyaz.com/assets/images/og-default.jpg",
+        "email": "mailto:amrbinniyaz@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "High Wycombe",
+          "addressCountry": "GB"
+        },
+        "knowsAbout": [
+          "Quality assurance",
+          "Test automation",
+          "Web accessibility",
+          "WCAG",
+          "Core Web Vitals",
+          "Front-end development",
+          "Web design",
+          "UI design",
+          "Branding",
+          "Illustration"
+        ],
+        "sameAs": [
+          "https://github.com/amrbinniyaz"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://amrniyaz.com/#website",
+        "url": "https://amrniyaz.com/",
+        "name": "Amr Binniyaz",
+        "description": "QA lead and front-end developer — accessibility, test automation, web design and internal tooling.",
+        "publisher": {
+          "@id": "https://amrniyaz.com/#person"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://amrniyaz.com/work/bugherd-dashboard/#webpage",
+        "url": "https://amrniyaz.com/work/bugherd-dashboard/",
+        "name": "BugHerd Dashboard — Bug Trend Analytics — Amr Binniyaz",
+        "description": "An analytics layer over BugHerd that mirrors 227 client projects into a local database, records every status change as it happens, and turns a bug board into a trend you can make a decision from.",
+        "isPartOf": {
+          "@id": "https://amrniyaz.com/#website"
+        },
+        "mainEntity": {
+          "@id": "https://amrniyaz.com/work/bugherd-dashboard/#work"
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://amrniyaz.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Projects",
+              "item": "https://amrniyaz.com/projects.html"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "BugHerd Dashboard — Bug Trend Analytics",
+              "item": "https://amrniyaz.com/work/bugherd-dashboard/"
+            }
+          ]
+        }
+      },
+      {
+        "@type": "CreativeWork",
+        "@id": "https://amrniyaz.com/work/bugherd-dashboard/#work",
+        "name": "BugHerd Dashboard — Bug Trend Analytics",
+        "description": "An analytics layer over BugHerd that mirrors 227 client projects into a local database, records every status change as it happens, and turns a bug board into a trend you can make a decision from.",
+        "url": "https://amrniyaz.com/work/bugherd-dashboard/",
+        "image": [
+          "https://amrniyaz.com/assets/images/work/bugherd-dashboard-01-project-stats.webp",
+          "https://amrniyaz.com/assets/images/work/bugherd-dashboard-03-bug-trend.webp",
+          "https://amrniyaz.com/assets/images/work/bugherd-dashboard-02-distributions.webp"
+        ],
+        "genre": "Product",
+        "creator": {
+          "@id": "https://amrniyaz.com/#person"
+        },
+        "dateCreated": "2026",
+        "keywords": "Next.js 14 (App Router), React, TypeScript, Tailwind CSS, Radix UI, Recharts, PostgreSQL, Docker Compose, BugHerd API v2, Webhooks, Status-history table"
+      }
+    ]
+  }
+  </script>
+  <!-- seo:end -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap">
+
+  <link rel="stylesheet" href="assets/css/style.css?v=20260910-transitions2">
+  <link rel="stylesheet" href="assets/css/nav.css?v=20260910-menu-font1">
+  <link rel="stylesheet" href="assets/css/projects.css?v=20261013-detail1">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="page-scroll">
+
+  <a href="/work/bugherd-dashboard/#mainContent" class="skip-to-content">Skip to main content</a>
+
+  <div class="bg-layer" aria-hidden="true">
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <div class="bg-noise"></div>
+  </div>
+
+  <main id="mainContent">
+    <div class="wrap" id="projectRoot" data-slug="bugherd-dashboard">
+      <header class="pd-head">
+        <div class="pd-head-main">
+          <a class="project-back" href="projects.html" data-back="true"><span aria-hidden="true">←</span><span>All work</span></a>
+          <p class="pd-eyebrow"><span class="pd-chip pd-chip--solid">Case study</span><span class="pd-chip">Product</span><span class="pd-chip">2024 — 2026</span></p>
+          <h1 class="project-title">BugHerd Dashboard — Bug Trend Analytics</h1>
+          <p class="pd-summary">An analytics layer over BugHerd that mirrors 227 client projects into a local database, records every status change as it happens, and turns a bug board into a trend you can make a decision from.</p>
+        </div>
+        <dl class="pd-facts">
+          <div class="pd-fact"><dt>Role</dt><dd>Design &amp; Build</dd></div>
+          <div class="pd-fact"><dt>Timeline</dt><dd>2024 — 2026</dd></div>
+          <div class="pd-fact"><dt>Status</dt><dd>Live — internal</dd></div>
+          <div class="pd-fact"><dt>Category</dt><dd>Product</dd></div>
+        </dl>
+      </header>
+      <figure class="pd-hero">
+        <img src="assets/images/work/bugherd-dashboard-01-project-stats.webp" alt="BugHerd Dashboard — Bug Trend Analytics" fetchpriority="high">
+      </figure>
+      <div class="pd-body">
+        <nav class="pd-toc" aria-label="On this page">
+          <p class="pd-label">On this page</p>
+          <ol>
+            <li><a href="/work/bugherd-dashboard/#overview"><span>01</span>Overview</a></li>
+            <li><a href="/work/bugherd-dashboard/#problem"><span>02</span>The problem</a></li>
+            <li><a href="/work/bugherd-dashboard/#approach"><span>03</span>Approach</a></li>
+            <li><a href="/work/bugherd-dashboard/#screens"><span>04</span>Screens</a></li>
+            <li><a href="/work/bugherd-dashboard/#results"><span>05</span>Results</a></li>
+            <li><a href="/work/bugherd-dashboard/#stack"><span>06</span>Built with</a></li>
+          </ol>
+        </nav>
+        <div class="pd-content">
+          <section class="pd-section" id="overview" aria-labelledby="overview-title">
+            <h2 class="pd-h2" id="overview-title"><span class="pd-nr">01</span>Overview</h2>
+            <p class="pd-lede">A bug board tells you what is open right now. It does not tell you whether a project is converging or quietly filling up, which is the only thing worth knowing before a client call. This dashboard sits on top of BugHerd and answers the second question.</p>
+            <div class="pd-glance">
+              <div class="pd-card"><h3 class="pd-label">The challenge</h3><p>227 client projects lived in BugHerd, each as its own board.</p></div>
+              <div class="pd-card"><h3 class="pd-label">What I did</h3><ul><li>Mirror</li><li>Remember</li><li>Read the project</li><li>Trend</li><li>Distribute</li><li>Roll out</li></ul></div>
+              <div class="pd-card"><h3 class="pd-label">The result</h3><p>227 client projects readable from one place instead of one board at a time.</p></div>
+            </div>
+          </section>
+          <section class="pd-section" id="problem" aria-labelledby="problem-title">
+            <h2 class="pd-h2" id="problem-title"><span class="pd-nr">02</span>The problem</h2>
+            <p class="pd-text">227 client projects lived in BugHerd, each as its own board. Getting a read on one meant opening it and counting; getting a read across the account meant opening 227. Worse, the API only reports a task's current state — so nothing anywhere recorded that a bug moved from reported to review last Tuesday. Without that, a trend line is guesswork, and 'are we closing faster than they are reporting?' is unanswerable.</p>
+          </section>
+          <section class="pd-section" id="approach" aria-labelledby="approach-title">
+            <h2 class="pd-h2" id="approach-title"><span class="pd-nr">03</span>Approach</h2>
+            <ol class="pd-steps">
+              <li class="pd-step"><span class="pd-step-nr" aria-hidden="true">01</span><h3 class="pd-step-title">Mirror</h3><p>A sync engine copies every project and task into local PostgreSQL rather than calling the API on each page view. Pages resolve to a single SQL query; a full sync runs in the background when the mirror goes stale, and only new or changed tasks hit the API. A webhook endpoint means a change on the board reaches the dashboard in seconds instead of at the next sync.</p></li>
+              <li class="pd-step"><span class="pd-step-nr" aria-hidden="true">02</span><h3 class="pd-step-title">Remember</h3><p>Every status change is written to its own history table as the mirror sees it. That one table is what makes the rest possible — the trend charts are computed from recorded transitions rather than inferred from today's snapshot, so the lines describe what actually happened.</p></li>
+              <li class="pd-step"><span class="pd-step-nr" aria-hidden="true">03</span><h3 class="pd-step-title">Read the project</h3><p>Each project resolves to its real shape: total tasks split into open, closed and non-development, then broken across the workflow columns — clarification, reported, revisit, in-progress, for review — with every column split again by severity. 117 sitting in review is a different problem from 31 newly reported, and the layout refuses to average them together.</p></li>
+              <li class="pd-step"><span class="pd-step-nr" aria-hidden="true">04</span><h3 class="pd-step-title">Trend</h3><p>Creation is plotted against resolution over a selectable window, alongside a status trend for open, revisit and to-close-off. The gap between those lines is the decision: a project where new bugs outrun closed ones needs people, not a status update, and it shows up as divergence weeks before it shows up as a missed deadline.</p></li>
+              <li class="pd-step"><span class="pd-step-nr" aria-hidden="true">05</span><h3 class="pd-step-title">Distribute</h3><p>Priority, status and browser breakdowns give the texture behind the totals — whether a backlog is genuinely critical or mostly unset, and whether an issue is universal or one browser's problem.</p></li>
+              <li class="pd-step"><span class="pd-step-nr" aria-hidden="true">06</span><h3 class="pd-step-title">Roll out</h3><p>Getting BugHerd onto a client site had been a manual dev ticket per project, occasionally dropped. The handoff spec replaced it with a per-site CMS setting on the shared base template, mirroring how analytics is already injected: turning BugHerd on for a site becomes a value someone fills in, not a code change someone has to remember.</p></li>
+            </ol>
+          </section>
+          <section class="pd-section" id="screens" aria-labelledby="screens-title">
+            <h2 class="pd-h2" id="screens-title"><span class="pd-nr">04</span>Screens</h2>
+            <div class="pd-shots">
+            <figure class="gallery-figure">
+              <button class="pd-zoom" type="button" data-zoom="assets/images/work/bugherd-dashboard-03-bug-trend.webp" aria-label="Enlarge image: BugHerd Dashboard — Bug Trend Analytics — image 2"><img src="assets/images/work/bugherd-dashboard-03-bug-trend.webp" alt="BugHerd Dashboard — Bug Trend Analytics — image 2" loading="lazy" decoding="async"></button>
+            </figure>
+            <figure class="gallery-figure">
+              <button class="pd-zoom" type="button" data-zoom="assets/images/work/bugherd-dashboard-02-distributions.webp" aria-label="Enlarge image: BugHerd Dashboard — Bug Trend Analytics — image 3"><img src="assets/images/work/bugherd-dashboard-02-distributions.webp" alt="BugHerd Dashboard — Bug Trend Analytics — image 3" loading="lazy" decoding="async"></button>
+            </figure>
+            </div>
+          </section>
+          <section class="pd-section" id="results" aria-labelledby="results-title">
+            <h2 class="pd-h2" id="results-title"><span class="pd-nr">05</span>Results</h2>
+            <ul class="pd-results">
+              <li class="pd-result pd-result--stat"><span class="pd-stat">227</span><p>client projects readable from one place instead of one board at a time.</p></li>
+              <li class="pd-result"><span class="pd-check" aria-hidden="true"></span><p>Page loads became a single query against a local mirror rather than a fan-out of API calls.</p></li>
+              <li class="pd-result"><span class="pd-check" aria-hidden="true"></span><p>Trend charts are computed from recorded status transitions, so history is real rather than estimated.</p></li>
+              <li class="pd-result"><span class="pd-check" aria-hidden="true"></span><p>A project's backlog resolves to something actionable — 210 tasks, 172 open, 117 waiting on review, 30 critical — which is a staffing decision rather than a number.</p></li>
+            </ul>
+            <p class="pd-note"><span class="pd-label">Note</span>Internal tool. The first sync of a whole account is genuinely slow — it walks every project and task before the dashboard is useful — so the design leans on that being a one-off: after it, incremental sync and webhooks keep the mirror current at a fraction of the cost.</p>
+          </section>
+          <section class="pd-section" id="stack" aria-labelledby="stack-title">
+            <h2 class="pd-h2" id="stack-title"><span class="pd-nr">06</span>Built with</h2>
+            <div class="pd-stack">
+              <div class="pd-stack-row"><h3 class="pd-label">Frontend</h3><div class="tag-list"><span class="tag">Next.js 14 (App Router)</span><span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">Tailwind CSS</span><span class="tag">Radix UI</span><span class="tag">Recharts</span></div></div>
+              <div class="pd-stack-row"><h3 class="pd-label">Platform</h3><div class="tag-list"><span class="tag">PostgreSQL</span><span class="tag">Docker Compose</span></div></div>
+              <div class="pd-stack-row"><h3 class="pd-label">Data</h3><div class="tag-list"><span class="tag">BugHerd API v2</span><span class="tag">Webhooks</span><span class="tag">Status-history table</span></div></div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <nav class="project-nav" aria-label="More projects">
+        <a class="pnav pnav--prev" href="work/accessibility-audit/" data-slug="accessibility-audit">
+          <span class="pnav-thumb"><img src="assets/images/thumbnails/accessibility-audit.webp?v=12efc836" alt="" loading="lazy" decoding="async"></span>
+          <span class="pnav-text"><span class="pnav-label">Previous project</span><span class="pnav-title">Client A11y — Accessibility Monitoring</span><span class="pnav-meta">Product · 2026</span></span>
+        </a>
+        <a class="pnav pnav--next" href="work/fixigate-uae/" data-slug="fixigate-uae">
+          <span class="pnav-thumb"><img src="assets/images/thumbnails/fixigate-uae.webp?v=53af2600" alt="" loading="lazy" decoding="async"></span>
+          <span class="pnav-text"><span class="pnav-label">Next project</span><span class="pnav-title">Fixigate UAE</span><span class="pnav-meta">Media · 2019</span></span>
+        </a>
+      </nav>
+      <footer class="site-foot"><span>© 2026 Amr Binniyaz</span><a href="/">Back to home</a></footer>
+    </div>
+  </main>
+
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+  </div>
+
+  <div id="pageOverlay" aria-hidden="true"><span class="overlay-label" id="overlayLabel"></span></div>
+
+  <div class="page-tv-overlay" aria-hidden="true">
+    <div class="page-scanlines"></div>
+    <canvas class="page-grain-canvas" id="pageGrainCanvas"></canvas>
+    <div class="page-scanner-lines">
+      <span style="--dur:10s;--op:0.10"></span>
+      <span style="--dur:13s;--op:0.07"></span>
+      <span style="--dur:17s;--op:0.04"></span>
+    </div>
+    <div class="page-inner-glow"></div>
+    <div class="page-vignette"></div>
+  </div>
+
+  <div class="page-crt-bevel" aria-hidden="true"></div>
+  <div class="page-tv-frame" aria-hidden="true"></div>
+  <svg class="page-tv-stroke" aria-hidden="true"></svg>
+
+  <script src="assets/js/config.js?v=20260909-fluid5"></script>
+  <script src="assets/js/projects-data.js?v=20260910-transitions2"></script>
+  <script src="assets/js/melahah-project.js?v=20260910-transitions2"></script>
+  <script src="assets/js/integrated-project.js?v=20260910-transitions2"></script>
+  <script src="assets/js/apex-project.js?v=20261013-apex1"></script>
+  <script src="assets/js/project-thumbnails.js?v=20261013-apex1"></script>
+  <script src="assets/js/analytics.js" defer></script>
+  <script src="assets/js/reveal.js" defer></script>
+  <script src="assets/js/transition.js?v=20260910-transitions2" defer></script>
+  <script src="assets/js/contours.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/cursor.js?v=20260909-fluid5" defer></script>
+  <script src="assets/js/crt-overlay.js" defer></script>
+  <script src="assets/js/nav.js?v=20260910-transitions2" defer></script>
+  <script src="assets/js/project-detail.js?v=20261013-detail1" defer></script>
+</body>
+</html>

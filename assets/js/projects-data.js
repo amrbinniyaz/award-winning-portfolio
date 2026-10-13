@@ -26,24 +26,34 @@ window.Projects = [
   "title": "Vegan Valley — Rooted in Motion",
   "category": "Web Design",
   "year": "2026",
-  "cover": "assets/images/work/vegan-valley-3d-cover.webp",
-  "previewVideo": "assets/video/vegan-valley-preview.mp4",
-  "video": "assets/video/vegan-valley-showcase.mp4",
-  "videoCaption": "A walkthrough of the rotating bottle, product range and farm-to-bottle story.",
-  "localPreview": "http://localhost:3003/",
+  "cover": "assets/images/work/vegan-valley-live-cover.webp",
+  "previewVideo": "assets/video/vegan-valley-live-preview.mp4",
+  "video": "assets/video/vegan-valley-live-showcase.mp4",
+  "videoCaption": "A walkthrough of the live site: the flavour-switching bottle, menu categories, featured dishes, cold-pressed juices and ordering steps.",
+  "liveUrl": "https://veganvalley.in/",
   "gallery": [
     {
-      "src": "assets/images/work/vegan-valley-3d-flavours.webp",
-      "alt": "The 3D bottle showing the Classic Beet flavour and matching selection controls",
-      "caption": "Flavour selection rotates the bottle and updates its label, colour and surrounding product copy."
+      "src": "assets/images/work/vegan-valley-live-range.webp",
+      "alt": "Ten illustrated cold-pressed juice bottles on colour-coded cards with Greens, Roots and Citrus filters",
+      "caption": "Ten cold-pressed juices, each with its own illustrated label and colour, filterable by greens, roots and citrus."
     },
     {
-      "src": "assets/images/work/vegan-valley-3d-range.webp",
-      "alt": "Colour-coded Vegan Valley juice cards",
-      "caption": "A colour-led product range connects the expressive introduction to practical browsing."
+      "src": "assets/images/work/vegan-valley-live-menu.webp",
+      "alt": "The Vegan Valley menu page with a bowl and juice bottle, dish search and category navigation",
+      "caption": "The full menu: search by dish or ingredient, filter for high-protein or under-400 kcal, and jump between categories."
     },
     {
-      "src": "assets/images/work/vegan-valley-3d-story.webp",
+      "src": "assets/images/work/vegan-valley-live-picks.webp",
+      "alt": "Four featured dishes with prices, calories, protein and Add buttons",
+      "caption": "Featured dishes show price and nutrition up front, with one tap to add them to an order."
+    },
+    {
+      "src": "assets/images/work/vegan-valley-live-meal-plans.webp",
+      "alt": "The meal plans page headed 'Your week. A little greener.' beside a plant-based bowl",
+      "caption": "A dedicated meal-plans page introduces weekly plant-based lunches and dinners."
+    },
+    {
+      "src": "assets/images/work/vegan-valley-live-story.webp",
       "alt": "An illustrated chapter in the farm-to-bottle journey",
       "caption": "The farm-to-bottle story breaks the process into four navigable chapters."
     }
@@ -53,7 +63,7 @@ window.Projects = [
   "caseStudy": {
     "role": "Design & development",
     "timeline": "2026",
-    "status": "Interactive prototype",
+    "status": "Live website",
     "summary": "A bottle can do more than sit in a product photograph. For Vegan Valley, it becomes the thread through the experience: turning as the visitor scrolls, changing flavour on demand, and connecting a playful first impression to the ingredients inside.",
     "problem": "The design challenge was to give a plant-based food brand a distinctive digital presence while keeping its products easy to understand. The experience needed to communicate flavour, ingredients and character, then let people browse juices, explore bowls and discover meal plans without getting lost in the animation.",
     "approach": [
@@ -114,7 +124,7 @@ window.Projects = [
       "A four-chapter brand story with direct chapter navigation, plus an additional real-time 3D journey.",
       "Static-image and reduced-motion fallbacks keep the experience useful when animation is unavailable or unwanted."
     ],
-    "note": "This case study documents the working prototype and its implemented features. The meal-plan flow prepares an enquiry; it does not place an order. Commercial performance and conversion results have not been measured."
+    "note": "Vegan Valley is live at veganvalley.in. The meal-plan flow prepares an enquiry; it does not place an order. Commercial performance and conversion results have not been measured."
   }
 },
   {
